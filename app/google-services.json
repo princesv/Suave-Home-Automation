@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "364931988912",
+    "firebase_url": "https://suavy-home-automation-913b1-default-rtdb.firebaseio.com",
+    "project_id": "suavy-home-automation-913b1",
+    "storage_bucket": "suavy-home-automation-913b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364931988912:android:a358f6c029b8ca23f3aa75",
+        "android_client_info": {
+          "package_name": "com.princekr1447.suavyhomeautomation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "364931988912-qj0ujgqgp7l5h5p8cdi4p1k1a7pmq94p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzVTizIf6KUScVXCQt1bc9QEeRUWZf1Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "364931988912-qj0ujgqgp7l5h5p8cdi4p1k1a7pmq94p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
