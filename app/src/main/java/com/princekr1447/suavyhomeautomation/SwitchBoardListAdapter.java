@@ -45,7 +45,7 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
         View listViewItem=inflater.inflate(R.layout.list_item_layout,null,true);
-        if(keyPos.charAt(8*position)=='#'){
+        if(keyPos.charAt(8*position)=='2'){
             listViewItem.setVisibility(View.INVISIBLE);
             return listViewItem;
         }
