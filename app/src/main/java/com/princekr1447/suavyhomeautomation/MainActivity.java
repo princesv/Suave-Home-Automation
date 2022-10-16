@@ -1,9 +1,12 @@
 package com.princekr1447.suavyhomeautomation;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,25 +43,31 @@ public class MainActivity extends AppCompatActivity {
     public static final String USERID="userId";
     DatabaseReference refKeyPos;
     DatabaseReference refSwitchInfo;
+    DatabaseReference refUserId;
+    DatabaseReference refProductKey;
     String keyPos;
     List<SwitchBoard> switchBoardList;
     ListView listViewSwitcheBoards;
     int firstVisible_position=0;
     int top=0;
     List<String> datass = new ArrayList<>();
+    List<String> productKeys=new ArrayList<>();
+    FloatingActionButton mFab;
     final String urlString="https://suavy-home-automation-913b1-default-rtdb.firebaseio.com/usersId/";
     public static final String SHARED_PREF="sharedPrefs";
+    public static final int LAUNCH_QR_ACTIVITY_FOR_RESULT=11111;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         switchBoardList=new ArrayList<>();
         listViewSwitcheBoards=findViewById(R.id.listViewSwitchBoards);
+        mFab=findViewById(R.id.add_fab);
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         if(sharedPreferences!=null) {
             emailEncoded = sharedPreferences.getString(USERID, "F");
         }
-        String urlStringForCall=urlString+emailEncoded+".json";
+       /* String urlStringForCall=urlString+emailEncoded+".json";
         final URL urlForNetworkCall=getUrlFromString(urlStringForCall);
         final CountDownLatch mCountDownLatch=new CountDownLatch(1);
         new Thread(new Runnable() {
@@ -78,37 +88,62 @@ public class MainActivity extends AppCompatActivity {
             mCountDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        refKeyPos=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("keyPos");
-        refSwitchInfo=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("SwitchBoards");
-        refKeyPos.orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
+        }*/
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, QrScannerActivity.class);
+                startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+            }
+        });
+        refUserId=FirebaseDatabase.getInstance().getReference().child("iserId");
+        refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
+        refUserId.child(emailEncoded).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String res=snapshot.getValue().toString();
-                int i=0;
+                productKeys.clear();
+                for(DataSnapshot artistSnapshot:snapshot.getChildren()){
+                    String pc=artistSnapshot.getValue(String.class);
+                    productKeys.add(pc);
+                }
+                productKey=productKeys.get(0);
+                if(productKey!=null){
+                    refProductKey.child(productKey).child("keyPos").orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String res=snapshot.getValue(String.class);
+               /* int i=0;
                 for(i=0;i<res.length();i++) {
                     if(res.charAt(i)=='='){
                         break;
                     }
                 }
                 keyPos=res.substring(i+1,res.length()-1);
-                refSwitchInfo.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        View v = listViewSwitcheBoards.getChildAt(0);
-                        top = (v == null) ? 0 : (v.getTop() - listViewSwitcheBoards.getPaddingTop());
-                        getData(snapshot);
-                    }
+                */
+                            refProductKey.child(productKey).child("SwitchBoards").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    View v = listViewSwitcheBoards.getChildAt(0);
+                                    top = (v == null) ? 0 : (v.getTop() - listViewSwitcheBoards.getPaddingTop());
+                                    getData(snapshot);
+                                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+                }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
         listViewSwitcheBoards.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -215,5 +250,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==LAUNCH_QR_ACTIVITY_FOR_RESULT){
+            if(resultCode== Activity.RESULT_OK){
+                String pk=data.getStringExtra("result");
+                String res=refProductKey.child(pk).getKey();
+                if(res==null){
+                    Toast.makeText(this, "Invalid product key", Toast.LENGTH_SHORT).show();
+                }else if(res=="#"){
+                    String id=refUserId.child(emailEncoded).push().getKey();
+                    refUserId.child(emailEncoded).child(id).setValue(pk);
+                    String kp= "";
+                    String tmp="01010101";
+                    for(int i=0;i<25;i++){
+                        kp=kp.concat(tmp);
+                    }
+                    SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
+                    for(int i=0;i<25;i++){
+                        refProductKey.child(pk).child("SwitchBoards").child(""+i).setValue(switchBoard);
+                    }
+                    refProductKey.child(pk).child(keyPos).setValue(kp);
+                }else{
+                    Toast.makeText(this, "Product key already used by some other user", Toast.LENGTH_SHORT).show();
+                }
+            }else if(resultCode== Activity.RESULT_CANCELED){
+                Toast.makeText(this, "Failed to scan product key. Try again.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

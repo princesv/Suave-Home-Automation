@@ -49,7 +49,7 @@ public class SignupActivity extends AppCompatActivity {
     EditText editTextCity;
     EditText editTextCountry;
     TextView goToSignIn;
-    String productKey;
+    ArrayList<String> productKeys;
     private FirebaseAuth mAuth;
     DatabaseReference databaseReferenceUsersId;
     DatabaseReference databaseReferenceProductKey;
@@ -61,7 +61,7 @@ public class SignupActivity extends AppCompatActivity {
     public static final String SHARED_PREF="sharedPrefs";
     public static final String SIGNEDIN="signedIn";
     public static final String USERID="userId";
-    public static final int LAUNCH_QR_ACTIVITY_FOR_RESULT=11111;
+    String emailSignup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +70,7 @@ public class SignupActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         final SharedPreferences.Editor editor=sharedPreferences.edit();
 
-        productKey=null;
+        productKeys=new ArrayList<>();
         button_signup=findViewById(R.id.buttonAccount);
         editTextEmail=findViewById(R.id.editEmail);
         editTextPassword=findViewById(R.id.editPass);
@@ -89,13 +89,12 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 datass.clear();
-                String emailSignup=editTextEmail.getText().toString().trim();
+                emailSignup=editTextEmail.getText().toString().trim();
                 String passwordSignup=editTextPassword.getText().toString().trim();
-                String pincodeSignup=editTextPincode.getText().toString().trim();
+                final String pincodeSignup=editTextPincode.getText().toString().trim();
                 final String addressLine1=editTextAddressLine1.getText().toString().trim();
                 final String stringCity=editTextCity.getText().toString().trim();
                 final String stringState=editTextCountry.getText().toString().trim();
-
                 if(emailSignup.isEmpty()){
                     editTextEmail.setError("Email is required");
                     editTextEmail.requestFocus();
@@ -117,52 +116,14 @@ public class SignupActivity extends AppCompatActivity {
                     editTextPassword.requestFocus();
                     return;
                 }
-                if(productKey==null){
-                    Toast.makeText(SignupActivity.this, "Scan product key to signup.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String urlStringForCall=urlString+productKey+".json";
-                final URL urlForNetworkCall=getUrlFromString(urlStringForCall);
-                final CountDownLatch mCountDownLatch=new CountDownLatch(1);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String isAlreadyPresentcallResult= null;
-                        try {
-                            isAlreadyPresentcallResult = getResponseFromHttpUrl(urlForNetworkCall);
-                            datass.add(isAlreadyPresentcallResult);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        mCountDownLatch.countDown();
-                    }
-                }).start();
-                try {
-                    mCountDownLatch.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(datass.size()!=0&&!datass.get(0).equals("null")){
-                    Toast.makeText(SignupActivity.this, "Unable to signup. Product already attached to another email account.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                final String productKeyForCall=productKey;
-                final String editedEmailForCall= emailSignup.replace(".","DOTT");;
-                final String pincodeForCall=pincodeSignup;
                 mAuth.createUserWithEmailAndPassword(emailSignup,passwordSignup).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                            databaseReferenceUsersId.child(editedEmailForCall).setValue(productKeyForCall);
-                            String keyPos= "";
-                            String tmp="01010101";
-                            for(int i=0;i<5;i++){
-                                keyPos=keyPos.concat(tmp);
-                            }
-                            UserSignupInfo userSignupInfo=new UserSignupInfo(pincodeForCall,productKeyForCall,addressLine1,stringCity,stringState,keyPos);
-                            databaseReferenceProductKey.child(productKey).setValue(userSignupInfo);
-                            initialiseBoards(productKey);
+                            String editedEmailForCall= emailSignup.replace(".","DOTT");
+                            UserSignupInfo userSignupInfo=new UserSignupInfo(pincodeSignup,productKeys,addressLine1,stringCity,stringState);
+                            databaseReferenceUsersId.child(editedEmailForCall).setValue(userSignupInfo);
                             Intent intent=new Intent(SignupActivity.this,MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             editor.putBoolean(SIGNEDIN,true);
@@ -182,61 +143,16 @@ public class SignupActivity extends AppCompatActivity {
                 });
             }
         });
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==LAUNCH_QR_ACTIVITY_FOR_RESULT){
-            if(resultCode==Activity.RESULT_OK){
-                productKey=data.getStringExtra("result");
-            }else if(resultCode== Activity.RESULT_CANCELED){
-                Toast.makeText(this, "Failed to scan product key. Try again.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public void openQrScanActivity(View view){
-        Intent i = new Intent(this, QrScannerActivity.class);
-        startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
-    }
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        try {
-            InputStream in = urlConnection.getInputStream();
-
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                return scanner.next();
-            } else {
-                return null;
-            }
-        } finally {
-            urlConnection.disconnect();
-        }
-    }
-    URL getUrlFromString(String stringUrl){
-        try {
-            URL urlToFetchData = new URL(stringUrl);
-            return urlToFetchData;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
     public void openSignin(View view){
         Intent intent=new Intent(this,SigninActivity.class);
         startActivity(intent);
         finish();
     }
-    void initialiseBoards(String productKey){
+   /* void initialiseBoards(){
         SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
-        for(int i=0;i<5;i++){
+        for(int i=0;i<25;i++){
             databaseReferenceProductKey.child(productKey).child("SwitchBoards").child(""+i).setValue(switchBoard);
         }
-    }
+    }*/
 }

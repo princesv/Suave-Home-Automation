@@ -1,27 +1,20 @@
 package com.princekr1447.suavyhomeautomation;
+
+import java.util.ArrayList;
+
 public class UserSignupInfo {
     String pincode;
-    String productKey;
+    ArrayList<String> productKey;
     String Address;
     String city;
     String state;
-    String keyPos;
 
-    public UserSignupInfo(String pincode, String productKey, String address, String city, String state,String keyPos) {
+    public UserSignupInfo(String pincode, ArrayList<String> productKey, String address, String city, String state) {
         this.pincode = pincode;
         this.productKey = productKey;
         Address = address;
         this.city = city;
         this.state = state;
-        this.keyPos=keyPos;
-    }
-
-    public String getKeyPos() {
-        return keyPos;
-    }
-
-    public void setKeyPos(String keyPos) {
-        this.keyPos = keyPos;
     }
 
     public String getAddress() {
@@ -56,11 +49,11 @@ public class UserSignupInfo {
         this.pincode = pincode;
     }
 
-    public String getProductKey() {
+    public ArrayList<String> getProductKey() {
         return productKey;
     }
 
-    public void setProductKey(String productKey) {
+    public void setProductKey(ArrayList<String> productKey) {
         this.productKey = productKey;
     }
 }
