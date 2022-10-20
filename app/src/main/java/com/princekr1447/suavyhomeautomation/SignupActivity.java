@@ -124,7 +124,7 @@ public class SignupActivity extends AppCompatActivity {
                             String editedEmailForCall= emailSignup.replace(".","DOTT");
                             UserSignupInfo userSignupInfo=new UserSignupInfo(pincodeSignup,productKeys,addressLine1,stringCity,stringState);
                             databaseReferenceUsersId.child(editedEmailForCall).setValue(userSignupInfo);
-                            Intent intent=new Intent(SignupActivity.this,MainActivity.class);
+                            Intent intent=new Intent(SignupActivity.this,Main2Activity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             editor.putBoolean(SIGNEDIN,true);
                             editor.putString(USERID,editedEmailForCall);

@@ -14,4 +14,5 @@
     <string name="go_to_login"><u>Already have an account? Sign up instead.</u></string>
     <string name="go_to_signup">Dont have an account? Create one!</string>
     <string name="login_account_text">Login to your account!</string>
+    <string name="central_module_name">Smartdom</string>
 </resources>

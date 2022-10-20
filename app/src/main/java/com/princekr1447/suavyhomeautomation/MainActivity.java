@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,8 +41,6 @@ import java.util.concurrent.CountDownLatch;
 public class MainActivity extends AppCompatActivity {
     String emailEncoded;
     String productKey;
-    SharedPreferences sharedPreferences;
-    public static final String USERID="userId";
     DatabaseReference refKeyPos;
     DatabaseReference refSwitchInfo;
     DatabaseReference refUserId;
@@ -51,101 +51,26 @@ public class MainActivity extends AppCompatActivity {
     int firstVisible_position=0;
     int top=0;
     List<String> datass = new ArrayList<>();
-    List<String> productKeys=new ArrayList<>();
     FloatingActionButton mFab;
     final String urlString="https://suavy-home-automation-913b1-default-rtdb.firebaseio.com/usersId/";
-    public static final String SHARED_PREF="sharedPrefs";
-    public static final int LAUNCH_QR_ACTIVITY_FOR_RESULT=11111;
+    public static final String USERID="userId";
+    String PRODUCTKEY_KEY="ProductKeyId1236";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         switchBoardList=new ArrayList<>();
         listViewSwitcheBoards=findViewById(R.id.listViewSwitchBoards);
-        mFab=findViewById(R.id.add_fab);
-        sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
-        if(sharedPreferences!=null) {
-            emailEncoded = sharedPreferences.getString(USERID, "F");
+        productKey= "";
+        String tmp="01010101";
+        for(int i=0;i<25;i++){
+            productKey=productKey.concat(tmp);
         }
-       /* String urlStringForCall=urlString+emailEncoded+".json";
-        final URL urlForNetworkCall=getUrlFromString(urlStringForCall);
-        final CountDownLatch mCountDownLatch=new CountDownLatch(1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String isAlreadyPresentcallResult= null;
-                try {
-                    isAlreadyPresentcallResult = getResponseFromHttpUrl(urlForNetworkCall);
-                    datass.add(isAlreadyPresentcallResult);
-                    productKey=datass.get(0).substring(1,datass.get(0).length()-1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mCountDownLatch.countDown();
-            }
-        }).start();
-        try {
-            mCountDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, QrScannerActivity.class);
-                startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
-            }
-        });
-        refUserId=FirebaseDatabase.getInstance().getReference().child("iserId");
+        Intent intent=getIntent();
+        productKey=intent.getStringExtra(PRODUCTKEY_KEY);
+        refUserId=FirebaseDatabase.getInstance().getReference().child("usersId");
         refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
-        refUserId.child(emailEncoded).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                productKeys.clear();
-                for(DataSnapshot artistSnapshot:snapshot.getChildren()){
-                    String pc=artistSnapshot.getValue(String.class);
-                    productKeys.add(pc);
-                }
-                productKey=productKeys.get(0);
-                if(productKey!=null){
-                    refProductKey.child(productKey).child("keyPos").orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            String res=snapshot.getValue(String.class);
-               /* int i=0;
-                for(i=0;i<res.length();i++) {
-                    if(res.charAt(i)=='='){
-                        break;
-                    }
-                }
-                keyPos=res.substring(i+1,res.length()-1);
-                */
-                            refProductKey.child(productKey).child("SwitchBoards").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    View v = listViewSwitcheBoards.getChildAt(0);
-                                    top = (v == null) ? 0 : (v.getTop() - listViewSwitcheBoards.getPaddingTop());
-                                    getData(snapshot);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        refKeyPos=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("keyPos");
         listViewSwitcheBoards.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -154,46 +79,41 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        refProductKey.child(productKey).child("keyPos").orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot cmSnapshot:snapshot.getChildren()) {
+                    keyPos = cmSnapshot.getValue(String.class);
+                }
+                refProductKey.child(productKey).child("switchBoards").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        switchBoardList.clear();
+                        for(DataSnapshot artistSnapshot:snapshot.getChildren()){
+
+                            SwitchBoard switchBoard=artistSnapshot.getValue(SwitchBoard.class);
+                            switchBoardList.add(switchBoard);
+
+                        }
+                        updateUi();
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
-    void getData(DataSnapshot snapshot){
-        switchBoardList.clear();
-        for(DataSnapshot artistSnapshot:snapshot.getChildren()){
-
-            SwitchBoard switchBoard=artistSnapshot.getValue(SwitchBoard.class);
-            switchBoardList.add(switchBoard);
-
-        }
+    void updateUi(){
         SwitchBoardListAdapter adapter=new SwitchBoardListAdapter(MainActivity.this,switchBoardList,keyPos,refKeyPos,productKey);
         listViewSwitcheBoards.setAdapter(adapter);
         listViewSwitcheBoards.setSelectionFromTop(firstVisible_position, top);
-    }
-    URL getUrlFromString(String stringUrl){
-        try {
-            URL urlToFetchData = new URL(stringUrl);
-            return urlToFetchData;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        try {
-            InputStream in = urlConnection.getInputStream();
-
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                return scanner.next();
-            } else {
-                return null;
-            }
-        } finally {
-            urlConnection.disconnect();
-        }
     }
     private void showUpdateDialog(final int pos, String switchBoardTitle){
         AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(this);
@@ -242,43 +162,11 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     SwitchBoard switchBoard = new SwitchBoard(title,s1,s2,s3,s4,s5,s6,s7,s8);
                     DatabaseReference dbrEdit = refSwitchInfo.child(pos+"");
-
                     dbrEdit.setValue(switchBoard);
                     Toast.makeText(MainActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
                 }
             }
         });
-
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==LAUNCH_QR_ACTIVITY_FOR_RESULT){
-            if(resultCode== Activity.RESULT_OK){
-                String pk=data.getStringExtra("result");
-                String res=refProductKey.child(pk).getKey();
-                if(res==null){
-                    Toast.makeText(this, "Invalid product key", Toast.LENGTH_SHORT).show();
-                }else if(res=="#"){
-                    String id=refUserId.child(emailEncoded).push().getKey();
-                    refUserId.child(emailEncoded).child(id).setValue(pk);
-                    String kp= "";
-                    String tmp="01010101";
-                    for(int i=0;i<25;i++){
-                        kp=kp.concat(tmp);
-                    }
-                    SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
-                    for(int i=0;i<25;i++){
-                        refProductKey.child(pk).child("SwitchBoards").child(""+i).setValue(switchBoard);
-                    }
-                    refProductKey.child(pk).child(keyPos).setValue(kp);
-                }else{
-                    Toast.makeText(this, "Product key already used by some other user", Toast.LENGTH_SHORT).show();
-                }
-            }else if(resultCode== Activity.RESULT_CANCELED){
-                Toast.makeText(this, "Failed to scan product key. Try again.", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }

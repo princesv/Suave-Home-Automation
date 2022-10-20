@@ -40,7 +40,7 @@ public class SigninActivity extends AppCompatActivity {
         isSignedIn = sharedPreferences.getBoolean(SIGNEDIN,false);
 
         if(isSignedIn) {
-            Intent intent=new Intent(SigninActivity.this,MainActivity.class);
+            Intent intent=new Intent(SigninActivity.this,Main2Activity.class);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

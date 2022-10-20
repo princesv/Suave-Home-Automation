@@ -249,7 +249,7 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
 
     @Override
     public int getCount() {
-        return super.getCount();
+        return switchBoardList.size();
     }
     private void showUpdateDialog(final int pos, String switchBoardTitle){
         AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
