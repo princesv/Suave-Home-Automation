@@ -60,28 +60,6 @@ public class Main2Activity extends AppCompatActivity {
         }
         refUserId= FirebaseDatabase.getInstance().getReference().child("usersId");
         refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
-        centralModuleListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(Main2Activity.this);
-                LayoutInflater inflater=getLayoutInflater();
-                final View dialogView=inflater.inflate(R.layout.update_dialog,null);
-                dialogBuilder.setView(dialogView);
-                final EditText editText=dialogView.findViewById(R.id.cm_name);
-                Button cmUpdateButton=dialogView.findViewById(R.id.cm_update_button);
-                cmUpdateButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String s1=editText.getText().toString();
-                        if(TextUtils.isEmpty(s1)){
-                            Toast.makeText(Main2Activity.this, "Text field empty!", Toast.LENGTH_SHORT).show();
-                        }else{
-                            refUserId.child(emailEncoded).child()
-                        }
-                    }
-                });
-            }
-        });
         refUserId.child(emailEncoded).child("productKeys").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -92,7 +70,7 @@ public class Main2Activity extends AppCompatActivity {
                     centralModules.add(pk);
 
                 }
-                CentralModuleListAdapter adapter=new CentralModuleListAdapter(Main2Activity.this,centralModules);
+                CentralModuleListAdapter adapter=new CentralModuleListAdapter(Main2Activity.this,centralModules,refUserId,emailEncoded);
                 centralModuleListView.setAdapter(adapter);
             }
 
@@ -125,9 +103,10 @@ public class Main2Activity extends AppCompatActivity {
                     if(res.equals("DataSnapshot { key = switchBoards, value = null }")){
                         Toast.makeText(Main2Activity.this, "Invalid product key", Toast.LENGTH_SHORT).show();
                     }else if(res.equals("DataSnapshot { key = switchBoards, value = # }")){
-                        String id=refUserId.child(emailEncoded).child("productKeys").push().getKey();
-                        CentralModule cm=new CentralModule("name",pk);
-                        refUserId.child(emailEncoded).child("productKeys").child(id).setValue(cm);
+                       // String id=refUserId.child(emailEncoded).child("productKeys").push().getKey();
+                        CentralModule cm=new CentralModule("untitled",pk);
+                        refUserId.child(emailEncoded).child("productKeys").child(pk).setValue(cm);
+                        //refProductKey.child(pk).child("Name").setValue("Untitled");
                         SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
                         for(int i=0;i<25;i++){
                             refProductKey.child(pk).child("switchBoards").child(""+i).setValue(switchBoard);

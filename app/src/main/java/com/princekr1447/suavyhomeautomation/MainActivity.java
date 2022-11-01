@@ -85,27 +85,32 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSnapshot cmSnapshot:snapshot.getChildren()) {
                     keyPos = cmSnapshot.getValue(String.class);
                 }
-                refProductKey.child(productKey).child("switchBoards").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        switchBoardList.clear();
-                        for(DataSnapshot artistSnapshot:snapshot.getChildren()){
-
-                            SwitchBoard switchBoard=artistSnapshot.getValue(SwitchBoard.class);
-                            switchBoardList.add(switchBoard);
-
-                        }
-                        updateUi();
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                if(switchBoardList!=null){
+                    updateUi();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        refProductKey.child(productKey).child("switchBoards").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                switchBoardList.clear();
+                for(DataSnapshot artistSnapshot:snapshot.getChildren()){
+
+                    SwitchBoard switchBoard=artistSnapshot.getValue(SwitchBoard.class);
+                    switchBoardList.add(switchBoard);
+
+                }
+                if(keyPos!=null) {
+                    updateUi();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
