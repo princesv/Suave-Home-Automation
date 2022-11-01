@@ -46,8 +46,13 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         LayoutInflater inflater=context.getLayoutInflater();
         View listViewItem=inflater.inflate(R.layout.list_item_layout,null,true);
         if(keyPos.charAt(8*position)=='2'){
-            listViewItem.setVisibility(View.INVISIBLE);
-            return listViewItem;
+        }
+        boolean f=true;
+        for(int i=8*position;i<8*position+8;i++){
+            if(keyPos.charAt(i)!='2'){
+                f=false;
+                break;
+            }
         }
         TextView title=listViewItem.findViewById(R.id.board_title);
         TextView switch1=listViewItem.findViewById(R.id.switchName1);
@@ -68,6 +73,8 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         SwitchCompat tb8=listViewItem.findViewById(R.id.toggleButton8);
         ImageButton buttonEdit=listViewItem.findViewById(R.id.buttonEdit);
         SwitchBoard switchBoard=switchBoardList.get(position);
+        title.setVisibility(View.VISIBLE);
+        buttonEdit.setVisibility(View.VISIBLE);
         title.setText(switchBoard.getTitle());
         switch1.setText(switchBoard.getName1());
         switch2.setText(switchBoard.getName2());
@@ -78,44 +85,105 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         switch7.setText(switchBoard.getName7());
         switch8.setText(switchBoard.getName8());
         if(keyPos.charAt(8*position)=='1'){
+            tb1.setVisibility(View.VISIBLE);
+            switch1.setVisibility(View.VISIBLE);
             tb1.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position)=='0'){
+            tb1.setVisibility(View.VISIBLE);
+            switch1.setVisibility(View.VISIBLE);
             tb1.setChecked(false);
+        }else{
+            tb1.setVisibility(View.GONE);
+            switch1.setVisibility(View.GONE);
         }
         if(keyPos.charAt(8*position+1)=='1'){
+            tb2.setVisibility(View.VISIBLE);
+            switch2.setVisibility(View.VISIBLE);
             tb2.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position+1)=='0'){
+            tb2.setVisibility(View.VISIBLE);
+            switch2.setVisibility(View.VISIBLE);
             tb2.setChecked(false);
+        }else{
+            tb2.setVisibility(View.GONE);
+            switch2.setVisibility(View.GONE);
         }
         if(keyPos.charAt(8*position+2)=='1'){
+            tb3.setVisibility(View.VISIBLE);
+            switch3.setVisibility(View.VISIBLE);
             tb3.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position+2)=='0'){
+            tb3.setVisibility(View.VISIBLE);
+            switch3.setVisibility(View.VISIBLE);
             tb3.setChecked(false);
+        }else{
+            tb3.setVisibility(View.GONE);
+            switch3.setVisibility(View.GONE);
         }
         if(keyPos.charAt(8*position+3)=='1'){
+            tb4.setVisibility(View.VISIBLE);
+            switch4.setVisibility(View.VISIBLE);
             tb4.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position+3)=='0'){
+            tb4.setVisibility(View.VISIBLE);
+            switch4.setVisibility(View.VISIBLE);
             tb4.setChecked(false);
+        }else{
+            tb4.setVisibility(View.GONE);
+            switch4.setVisibility(View.GONE);
         }
         if(keyPos.charAt(8*position+4)=='1'){
+            tb5.setVisibility(View.VISIBLE);
+            switch5.setVisibility(View.VISIBLE);
             tb5.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position+4)=='0'){
+            tb5.setVisibility(View.VISIBLE);
+            switch5.setVisibility(View.VISIBLE);
             tb5.setChecked(false);
+        }else{
+            tb5.setVisibility(View.GONE);
+            switch5.setVisibility(View.GONE);
         }
         if(keyPos.charAt(8*position+5)=='1'){
+            tb6.setVisibility(View.VISIBLE);
+            switch6.setVisibility(View.VISIBLE);
             tb6.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position+5)=='0'){
+            tb6.setVisibility(View.VISIBLE);
+            switch6.setVisibility(View.VISIBLE);
             tb6.setChecked(false);
+        }else{
+            tb6.setVisibility(View.GONE);
+            switch6.setVisibility(View.GONE);
         }
         if(keyPos.charAt(8*position+6)=='1'){
+            tb7.setVisibility(View.VISIBLE);
+            switch7.setVisibility(View.VISIBLE);
             tb7.setChecked(true);
-        }else{
+        }else if(keyPos.charAt(8*position+6)=='0'){
+            tb7.setVisibility(View.VISIBLE);
+            switch7.setVisibility(View.VISIBLE);
             tb7.setChecked(false);
-        }
-        if(keyPos.charAt(position*8+7)=='1'){
-            tb8.setChecked(true);
         }else{
+            tb7.setVisibility(View.GONE);
+            switch7.setVisibility(View.GONE);
+        }
+        if(keyPos.charAt(8*position+7)=='1'){
+            tb8.setVisibility(View.VISIBLE);
+            switch8.setVisibility(View.VISIBLE);
+            tb8.setChecked(true);
+        }else if(keyPos.charAt(8*position+7)=='0'){
+            tb8.setVisibility(View.VISIBLE);
+            switch8.setVisibility(View.VISIBLE);
             tb8.setChecked(false);
+        }else{
+            tb8.setVisibility(View.GONE);
+            switch8.setVisibility(View.GONE);
+        }
+        if(f){
+            title.setVisibility(View.GONE);
+            buttonEdit.setVisibility(View.GONE);
+            return listViewItem;
         }
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
