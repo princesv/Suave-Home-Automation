@@ -365,7 +365,7 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
                 }
                 else {
                     SwitchBoard switchBoard = new SwitchBoard(title,s1,s2,s3,s4,s5,s6,s7,s8);
-                    DatabaseReference refSwitchInfo=refSwitchInfo=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("SwitchBoards");
+                    DatabaseReference refSwitchInfo=refSwitchInfo=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("switchBoards");
                     DatabaseReference dbrEdit = refSwitchInfo.child(pos+"");
                     dbrEdit.setValue(switchBoard);
                     Toast.makeText(context, "Update Successful", Toast.LENGTH_SHORT).show();

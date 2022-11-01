@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,14 +13,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
+    FirebaseAuth mAuth;
     FloatingActionButton mFab;
     public static final int LAUNCH_QR_ACTIVITY_FOR_RESULT=11111;
     DatabaseReference refUserId;
@@ -41,12 +48,18 @@ public class Main2Activity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ArrayList<CentralModule> centralModules=new ArrayList<>();
     ListView centralModuleListView;
+    public static final String SIGNEDIN="signedIn";
+    TabLayout tabLayout;
+    ViewPager viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         centralModuleListView=findViewById(R.id.listViewCentralModules);
         mFab=findViewById(R.id.add_fab);
+        tabLayout=findViewById(R.id.tabLayout);
+        viewPager=findViewById(R.id.viewPager);
+        mAuth=FirebaseAuth.getInstance();
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,8 +83,27 @@ public class Main2Activity extends AppCompatActivity {
                     centralModules.add(pk);
 
                 }
-                CentralModuleListAdapter adapter=new CentralModuleListAdapter(Main2Activity.this,centralModules,refUserId,emailEncoded);
-                centralModuleListView.setAdapter(adapter);
+                updateTabLayout();
+                final SwitchBoardFragmentAdapter switchBoardFragmentAdapter = new SwitchBoardFragmentAdapter(Main2Activity.this,getSupportFragmentManager(), tabLayout.getTabCount(),centralModules,emailEncoded);
+                viewPager.setAdapter(switchBoardFragmentAdapter);
+                viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        viewPager.setCurrentItem(tab.getPosition());
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
+                    }
+                });
             }
 
             @Override
@@ -92,6 +124,13 @@ public class Main2Activity extends AppCompatActivity {
                 Toast.makeText(this, "Failed to scan product key. Try again.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    void updateTabLayout(){
+        tabLayout.removeAllTabs();
+        for(int i=0;i<centralModules.size();i++){
+            tabLayout.addTab(tabLayout.newTab().setText(centralModules.get(i).getName()));
+        }
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
     }
     private class AsyncTaskAddNewCentralModule extends AsyncTask<String, String, String> {
         @Override
@@ -135,5 +174,27 @@ public class Main2Activity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final SharedPreferences.Editor editor=sharedPreferences.edit();
+        switch (item.getItemId()) {
+            case R.id.logout:
+                mAuth.signOut();
+                editor.putBoolean(SIGNEDIN,false);
+                editor.commit();
+                Intent intent=new Intent(Main2Activity.this,SigninActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                return (true);
+        }
+        return true;
     }
 }
