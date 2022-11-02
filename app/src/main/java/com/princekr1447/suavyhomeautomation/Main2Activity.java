@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
@@ -47,18 +48,21 @@ public class Main2Activity extends AppCompatActivity {
     public static final String USERID="userId";
     SharedPreferences sharedPreferences;
     ArrayList<CentralModule> centralModules=new ArrayList<>();
-    ListView centralModuleListView;
     public static final String SIGNEDIN="signedIn";
     TabLayout tabLayout;
     ViewPager viewPager;
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        centralModuleListView=findViewById(R.id.listViewCentralModules);
         mFab=findViewById(R.id.add_fab);
         tabLayout=findViewById(R.id.tabLayout);
         viewPager=findViewById(R.id.viewPager);
+        //getSupportActionBar().hide();
+        toolbar=findViewById(R.id.toolBar);
+        //toolbar.inflateMenu(R.menu.main_menu);
+        setSupportActionBar(toolbar);
         mAuth=FirebaseAuth.getInstance();
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
