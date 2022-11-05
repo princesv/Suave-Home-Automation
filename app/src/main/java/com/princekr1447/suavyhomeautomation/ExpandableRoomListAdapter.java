@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -14,13 +15,10 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
-import android.view.LayoutInflater;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,42 +27,75 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
-    private Activity context;
-    private List<SwitchBoard> switchBoardList;
-    private String keyPos;
-    DatabaseReference refKeyPos;
-    String productKey;
-    DatabaseReference refProductKey;
+public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     ArrayList<RoomPojo> rooms;
-    public SwitchBoardListAdapter(Activity context,List<SwitchBoard> switchBoardList,String keyPos,DatabaseReference refKeyPos,String productKey){
-
-        super(context,R.layout.list_item_layout,switchBoardList);
+    Activity context;
+    String keyPos;
+    ArrayList<SwitchBoard> switchBoardList;
+    String productKey;
+    DatabaseReference refKeyPos;
+    DatabaseReference refProductKey;
+    public ExpandableRoomListAdapter(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey){
+        this.rooms=rooms;
         this.context=context;
-        this.switchBoardList=switchBoardList;
         this.keyPos=keyPos;
+        this.switchBoardList=switchBoardList;
         this.refKeyPos=refKeyPos;
-        this.productKey=productKey;
+        this.refProductKey=refProductKey;
     }
 
-    @NonNull
     @Override
-    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
-        rooms=new ArrayList<>();
-        LayoutInflater inflater=context.getLayoutInflater();
-        View listViewItem=inflater.inflate(R.layout.list_item_layout,null,true);
-        if(keyPos.charAt(8*position)=='2'){
+    public int getGroupCount() {
+        return rooms.size();
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        return rooms.get(groupPosition).getIndices().size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+        return null;
+    }
+
+    @Override
+    public Object getChild(int groupPosition, int childPosition) {
+        return null;
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return 0;
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return 0;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        if(convertView==null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.room_card_view, parent, false);
+        }
+        TextView roomTitle=convertView.findViewById(R.id.roomTitle);
+        roomTitle.setText(rooms.get(groupPosition).getTitle());
+        return convertView;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View listViewItem, ViewGroup parent) {
+        if(listViewItem==null) {
+            listViewItem = LayoutInflater.from(context).inflate(R.layout.list_item_layout, parent, false);
         }
         boolean f=true;
-        for(int i=8*position;i<8*position+8;i++){
-            if(keyPos.charAt(i)!='2'){
-                f=false;
-                break;
-            }
-        }
         TextView title=listViewItem.findViewById(R.id.board_title);
         TextView switch1=listViewItem.findViewById(R.id.switchName1);
         TextView switch2=listViewItem.findViewById(R.id.switchName2);
@@ -83,6 +114,13 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         SwitchCompat tb7=listViewItem.findViewById(R.id.toggleButton7);
         SwitchCompat tb8=listViewItem.findViewById(R.id.toggleButton8);
         ImageButton buttonEdit=listViewItem.findViewById(R.id.buttonEdit);
+        final int position=rooms.get(groupPosition).indices.get(childPosition);
+        for(int i=8*position;i<8*position+8;i++){
+            if(keyPos.charAt(i)!='2'){
+                f=false;
+                break;
+            }
+        }
         SwitchBoard switchBoard=switchBoardList.get(position);
         title.setVisibility(View.VISIBLE);
         buttonEdit.setVisibility(View.VISIBLE);
@@ -326,11 +364,6 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         return listViewItem;
     }
 
-    @Override
-    public int getCount() {
-        return switchBoardList.size();
-    }
-
     public void getListOfRoomsForSpinnerAndShowUpdateDialog(final int pos,final String switchBoardTitle){
         refProductKey.child(productKey).child("rooms").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -411,7 +444,7 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
                 }
                 else {
                     SwitchBoard switchBoard = new SwitchBoard(title,s1,s2,s3,s4,s5,s6,s7,s8);
-                    DatabaseReference refSwitchInfo=refSwitchInfo=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("switchBoards");
+                    DatabaseReference refSwitchInfo=refSwitchInfo= FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("switchBoards");
                     DatabaseReference dbrEdit = refSwitchInfo.child(pos+"");
                     dbrEdit.setValue(switchBoard);
                     Toast.makeText(context, "Update Successful", Toast.LENGTH_SHORT).show();
@@ -420,5 +453,21 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
             }
         });
 
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return true;
+    }
+
+    public void dataSetChanged(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey) {
+        super.notifyDataSetChanged();
+        this.rooms=rooms;
+        this.context=context;
+        this.keyPos=keyPos;
+        this.switchBoardList=switchBoardList;
+        this.refKeyPos=refKeyPos;
+        this.refProductKey=refProductKey;
+        notifyDataSetChanged();
     }
 }

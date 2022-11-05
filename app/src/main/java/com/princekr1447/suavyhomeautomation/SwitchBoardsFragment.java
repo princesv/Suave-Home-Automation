@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -39,14 +40,14 @@ public class SwitchBoardsFragment extends Fragment {
     DatabaseReference refUserId;
     DatabaseReference refProductKey;
     String keyPos;
-    List<SwitchBoard> switchBoardList;
-    ListView listViewSwitcheBoards;
+    ArrayList<SwitchBoard> switchBoardList;
+    ExpandableListView expandableListViewSwitcheBoards;
     ImageButton buttonEditCentralModuleName;
     String emailEncoded;
-    int firstVisible_position=0;
-    int top=0;
     Activity context;
-    String PRODUCTKEY_KEY="ProductKeyId1236";
+    Button btnAddRoom;
+    ArrayList<RoomPojo> rooms;
+    ExpandableRoomListAdapter expandableRoomListAdapter;
     public SwitchBoardsFragment(String productKey,String emailEncoded,Activity context) {
         this.productKey = productKey;
         this.emailEncoded=emailEncoded;
@@ -63,7 +64,10 @@ public class SwitchBoardsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.switch_board_fragment_view,container,false);
         switchBoardList=new ArrayList<>();
-        listViewSwitcheBoards=view.findViewById(R.id.listViewSwitchBoardsFragment);
+        rooms=new ArrayList<>();
+        switchBoardList=new ArrayList<>();
+        btnAddRoom=view.findViewById(R.id.btn_add_room);
+        expandableListViewSwitcheBoards=view.findViewById(R.id.expandableListRooms);
         buttonEditCentralModuleName=view.findViewById(R.id.buttonEditCentralModuleName);
         refUserId= FirebaseDatabase.getInstance().getReference().child("usersId");
         refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
@@ -74,11 +78,22 @@ public class SwitchBoardsFragment extends Fragment {
                 for(DataSnapshot cmSnapshot:snapshot.getChildren()) {
                     keyPos = cmSnapshot.getValue(String.class);
                 }
-                if(switchBoardList.size()!=0){
+                if(switchBoardList!=null&&rooms!=null){
                     //updateUi(container);
+                  /*  int index = listViewSwitcheBoards.getFirstVisiblePosition();
+                    View v = listViewSwitcheBoards.getChildAt(0);
+                    int top = (v == null) ? 0 : (v.getTop() - listViewSwitcheBoards.getPaddingTop());
                     SwitchBoardListAdapter adapter=new SwitchBoardListAdapter(getActivity(),switchBoardList,keyPos,refKeyPos,productKey);
                     listViewSwitcheBoards.setAdapter(adapter);
-                    listViewSwitcheBoards.setSelectionFromTop(firstVisible_position, top);
+                    listViewSwitcheBoards.setSelectionFromTop(index, top);
+
+                   */
+                    if(expandableRoomListAdapter==null) {
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+                    }else{
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                    }
                 }
             }
 
@@ -96,16 +111,83 @@ public class SwitchBoardsFragment extends Fragment {
                     switchBoardList.add(switchBoard);
 
                 }
-                if(keyPos!=null) {
+                if(keyPos!=null&&rooms!=null) {
                     //updateUi(container);
+                  /*  int index = listViewSwitcheBoards.getFirstVisiblePosition();
+                    View v = listViewSwitcheBoards.getChildAt(0);
+                    int top = (v == null) ? 0 : (v.getTop() - listViewSwitcheBoards.getPaddingTop());
                     SwitchBoardListAdapter adapter=new SwitchBoardListAdapter(getActivity(),switchBoardList,keyPos,refKeyPos,productKey);
                     listViewSwitcheBoards.setAdapter(adapter);
-                    listViewSwitcheBoards.setSelectionFromTop(firstVisible_position, top);
+                    listViewSwitcheBoards.setSelectionFromTop(index, top);
+
+                   */
+                    if(expandableRoomListAdapter==null) {
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+                    }else{
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                    }
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+        refProductKey.child(productKey).child("rooms").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                rooms.clear();
+                for(DataSnapshot artistSnapshot:snapshot.getChildren()){
+
+                    RoomPojo room=artistSnapshot.getValue(RoomPojo.class);
+                    rooms.add(room);
+
+                }
+                if(keyPos!=null&&switchBoardList!=null) {
+                    if(expandableRoomListAdapter==null) {
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+                    }else{
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                    }
+                }
+                /*RoomAdapter roomAdapter = new RoomAdapter(rooms,context,keyPos,switchBoardList,refKeyPos);
+                listViewSwitcheBoards.setAdapter(roomAdapter);
+                listViewSwitcheBoards.setHasFixedSize(true);
+
+                 */
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        btnAddRoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
+                LayoutInflater inflater=context.getLayoutInflater();
+                final View dialogView=inflater.inflate(R.layout.add_room_dialog,null);
+                dialogBuilder.setView(dialogView);
+                final EditText newRoomTitleEditText=dialogView.findViewById(R.id.newRoomTitle);
+                Button createNewRoomButton=dialogView.findViewById(R.id.btnCreateNewRoom);
+                final AlertDialog alertDialog=dialogBuilder.create();
+                alertDialog.show();
+                createNewRoomButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(newRoomTitleEditText.getText().equals("")){
+                            Toast.makeText(getContext(), "Text field empty!", Toast.LENGTH_SHORT).show();
+                        }else{
+                            String key=refProductKey.child(productKey).child("rooms").push().getKey();
+                            refProductKey.child(productKey).child("rooms").child(key).child("title").setValue(newRoomTitleEditText.getText().toString());
+                            Toast.makeText(getContext(), "Room created Successfully!", Toast.LENGTH_SHORT).show();
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
             }
         });
         buttonEditCentralModuleName.setOnClickListener(new View.OnClickListener() {

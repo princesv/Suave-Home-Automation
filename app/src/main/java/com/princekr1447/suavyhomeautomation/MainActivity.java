@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
     void updateUi(){
         SwitchBoardListAdapter adapter=new SwitchBoardListAdapter(MainActivity.this,switchBoardList,keyPos,refKeyPos,productKey);
-        listViewSwitcheBoards.setAdapter(adapter);
-        listViewSwitcheBoards.setSelectionFromTop(firstVisible_position, top);
+      //  listViewSwitcheBoards.setAdapter(adapter);
+       // listViewSwitcheBoards.setSelectionFromTop(firstVisible_position, top);
     }
     private void showUpdateDialog(final int pos, String switchBoardTitle){
         AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(this);

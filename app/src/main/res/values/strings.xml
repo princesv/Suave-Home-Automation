@@ -15,4 +15,5 @@
     <string name="go_to_signup">Dont have an account? Create one!</string>
     <string name="login_account_text">Login to your account!</string>
     <string name="central_module_name">Smartdom</string>
+    <string name="spinner_text">Change room</string>
 </resources>

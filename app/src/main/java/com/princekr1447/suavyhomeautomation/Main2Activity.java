@@ -83,8 +83,8 @@ public class Main2Activity extends AppCompatActivity {
                 centralModules.clear();
                 for(DataSnapshot artistSnapshot:snapshot.getChildren()){
 
-                    CentralModule pk=artistSnapshot.getValue(CentralModule.class);
-                    centralModules.add(pk);
+                    CentralModule cm=artistSnapshot.getValue(CentralModule.class);
+                    centralModules.add(cm);
 
                 }
                 updateTabLayout();
@@ -148,12 +148,18 @@ public class Main2Activity extends AppCompatActivity {
                     }else if(res.equals("DataSnapshot { key = switchBoards, value = # }")){
                        // String id=refUserId.child(emailEncoded).child("productKeys").push().getKey();
                         CentralModule cm=new CentralModule("untitled",pk);
-                        refUserId.child(emailEncoded).child("productKeys").child(pk).setValue(cm);
+                        String key=refUserId.child(emailEncoded).child("productKeys").push().getKey();
+                        refUserId.child(emailEncoded).child("productKeys").child(key).setValue(cm);
                         //refProductKey.child(pk).child("Name").setValue("Untitled");
                         SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
+                        ArrayList<Integer> indices=new ArrayList<>();
                         for(int i=0;i<25;i++){
                             refProductKey.child(pk).child("switchBoards").child(""+i).setValue(switchBoard);
+                            indices.add(i);
                         }
+                        RoomPojo roomPojo=new RoomPojo("standAlone",indices);
+                        String key2=refProductKey.child(pk).child("rooms").child("standAlone").push().getKey();
+                        refProductKey.child(pk).child("rooms").child(key2).setValue(roomPojo);
                         String kp= "";
                         String tmp="01010101";
                         for(int i=0;i<25;i++){
