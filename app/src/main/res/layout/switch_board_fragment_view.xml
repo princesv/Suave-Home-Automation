@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:nestedScrollingEnabled="true">
+    android:nestedScrollingEnabled="true"
+    >
     <androidx.appcompat.widget.AppCompatImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,5 +20,7 @@
     <ExpandableListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/expandableListRooms"/>
+        android:id="@+id/expandableListRooms"
+        android:nestedScrollingEnabled="true"
+        />
     </LinearLayout>

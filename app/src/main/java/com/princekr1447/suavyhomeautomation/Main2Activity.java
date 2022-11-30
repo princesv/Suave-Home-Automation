@@ -34,7 +34,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main2Activity extends AppCompatActivity {
     FirebaseAuth mAuth;
@@ -147,30 +149,47 @@ public class Main2Activity extends AppCompatActivity {
                         Toast.makeText(Main2Activity.this, "Invalid product key", Toast.LENGTH_SHORT).show();
                     }else if(res.equals("DataSnapshot { key = switchBoards, value = # }")){
                        // String id=refUserId.child(emailEncoded).child("productKeys").push().getKey();
-                        CentralModule cm=new CentralModule("untitled",pk);
-                        String key=refUserId.child(emailEncoded).child("productKeys").push().getKey();
-                        refUserId.child(emailEncoded).child("productKeys").child(key).setValue(cm);
+
                         //refProductKey.child(pk).child("Name").setValue("Untitled");
-                        SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
-                        ArrayList<Integer> indices=new ArrayList<>();
-                        for(int i=0;i<25;i++){
-                            refProductKey.child(pk).child("switchBoards").child(""+i).setValue(switchBoard);
-                            indices.add(i);
-                        }
-                        RoomPojo roomPojo=new RoomPojo("standAlone",indices);
-                        String key2=refProductKey.child(pk).child("rooms").child("standAlone").push().getKey();
-                        refProductKey.child(pk).child("rooms").child(key2).setValue(roomPojo);
-                        String kp= "";
-                        String tmp="01010101";
-                        for(int i=0;i<25;i++){
-                            kp=kp.concat(tmp);
-                        }
-                        String kpid=refProductKey.child(pk).child("keyPos").push().getKey();
-                        refProductKey.child(pk).child("keyPos").child(kpid).setValue(kp);
+                        initializeCentralModule();
+                        initializeSwitchBoards();
+                        initializeRoom();
+                        initializeProductKey();
                         Toast.makeText(Main2Activity.this, "Product added successfully!", Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(Main2Activity.this, "Product key already used by some other user", Toast.LENGTH_SHORT).show();
                     }
+                }
+                void initializeSwitchBoards(){
+                    SwitchBoard switchBoard=new SwitchBoard("Title","name1","name2","name3","name4","name5","name6","name7","name8");
+                    for(int i=0;i<25;i++){
+                        refProductKey.child(pk).child("switchBoards").child(""+i).setValue(switchBoard);
+                    }
+                }
+                void initializeRoom(){
+                    HashMap<String,IndexPojo> indices=new HashMap<>();
+                    String key2=refProductKey.child(pk).child("rooms").push().getKey();
+                    for(int i=0;i<25;i++){
+                        String key3 = refProductKey.child(pk).child("rooms").child(key2).push().getKey();
+                        IndexPojo indexPojo=new IndexPojo(key3,i);
+                        indices.put(key3,indexPojo);
+                    }
+                    RoomPojo roomPojo=new RoomPojo("Stand Alone",indices,key2);
+                    refProductKey.child(pk).child("rooms").child(key2).setValue(roomPojo);
+                }
+                void initializeCentralModule(){
+                    CentralModule cm=new CentralModule("untitled",pk);
+                    String key=refUserId.child(emailEncoded).child("productKeys").push().getKey();
+                    refUserId.child(emailEncoded).child("productKeys").child(key).setValue(cm);
+                }
+                void initializeProductKey(){
+                    String kp= "";
+                    String tmp="01010101";
+                    for(int i=0;i<25;i++){
+                        kp=kp.concat(tmp);
+                    }
+                    String kpid=refProductKey.child(pk).child("keyPos").push().getKey();
+                    refProductKey.child(pk).child("keyPos").child(kpid).setValue(kp);
                 }
 
                 @Override

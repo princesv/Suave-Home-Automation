@@ -30,7 +30,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.Inflater;
 
 public class SwitchBoardsFragment extends Fragment {
@@ -47,6 +51,7 @@ public class SwitchBoardsFragment extends Fragment {
     Activity context;
     Button btnAddRoom;
     ArrayList<RoomPojo> rooms;
+    ArrayList<ArrayList<IndexPojo>> indicesArrayList;
     ExpandableRoomListAdapter expandableRoomListAdapter;
     public SwitchBoardsFragment(String productKey,String emailEncoded,Activity context) {
         this.productKey = productKey;
@@ -65,7 +70,7 @@ public class SwitchBoardsFragment extends Fragment {
         View view =inflater.inflate(R.layout.switch_board_fragment_view,container,false);
         switchBoardList=new ArrayList<>();
         rooms=new ArrayList<>();
-        switchBoardList=new ArrayList<>();
+        indicesArrayList=new ArrayList<>();
         btnAddRoom=view.findViewById(R.id.btn_add_room);
         expandableListViewSwitcheBoards=view.findViewById(R.id.expandableListRooms);
         buttonEditCentralModuleName=view.findViewById(R.id.buttonEditCentralModuleName);
@@ -89,10 +94,10 @@ public class SwitchBoardsFragment extends Fragment {
 
                    */
                     if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     }
                 }
             }
@@ -122,10 +127,10 @@ public class SwitchBoardsFragment extends Fragment {
 
                    */
                     if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     }
                 }
             }
@@ -138,18 +143,37 @@ public class SwitchBoardsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 rooms.clear();
+                indicesArrayList.clear();
                 for(DataSnapshot artistSnapshot:snapshot.getChildren()){
-
                     RoomPojo room=artistSnapshot.getValue(RoomPojo.class);
                     rooms.add(room);
+                    if(room.getIndices()==null){
+                        continue;
+                    }
+                    Collection<IndexPojo> indicesCollection=room.indices.values();
+                    ArrayList<IndexPojo> indices=new ArrayList<>();
+                    for (IndexPojo index : indicesCollection){
+                        indices.add(index);
+                    }
+                    Collections.sort(indices, new Comparator<IndexPojo>(){
+                        public int compare(IndexPojo obj1, IndexPojo obj2) {
+                            // ## Ascending order
+                            return obj1.getKey().compareToIgnoreCase(obj2.getKey()); // To compare string values
+                            // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
 
+                            // ## Descending order
+                            // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                            // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
+                        }
+                    });
+                    indicesArrayList.add(indices);
                 }
                 if(keyPos!=null&&switchBoardList!=null) {
                     if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey);
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     }
                 }
                 /*RoomAdapter roomAdapter = new RoomAdapter(rooms,context,keyPos,switchBoardList,refKeyPos);
@@ -183,6 +207,7 @@ public class SwitchBoardsFragment extends Fragment {
                         }else{
                             String key=refProductKey.child(productKey).child("rooms").push().getKey();
                             refProductKey.child(productKey).child("rooms").child(key).child("title").setValue(newRoomTitleEditText.getText().toString());
+                            refProductKey.child(productKey).child("rooms").child(key).child("id").setValue(key);
                             Toast.makeText(getContext(), "Room created Successfully!", Toast.LENGTH_SHORT).show();
                             alertDialog.dismiss();
                         }

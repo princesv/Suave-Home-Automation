@@ -1,6 +1,7 @@
 package com.princekr1447.suavyhomeautomation;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,22 +28,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     ArrayList<RoomPojo> rooms;
+    ArrayList<ArrayList<IndexPojo>> indicesArrayList;
     Activity context;
     String keyPos;
     ArrayList<SwitchBoard> switchBoardList;
     String productKey;
     DatabaseReference refKeyPos;
     DatabaseReference refProductKey;
-    public ExpandableRoomListAdapter(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey){
+    public ExpandableRoomListAdapter(String productKey,ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey,ArrayList<ArrayList<IndexPojo>> indicesArrayList){
         this.rooms=rooms;
         this.context=context;
         this.keyPos=keyPos;
         this.switchBoardList=switchBoardList;
         this.refKeyPos=refKeyPos;
         this.refProductKey=refProductKey;
+        this.productKey=productKey;
+        this.indicesArrayList=indicesArrayList;
     }
 
     @Override
@@ -52,7 +58,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return rooms.get(groupPosition).getIndices().size();
+        if(indicesArrayList.get(groupPosition)==null){
+            return 0;
+        }
+        return indicesArrayList.get(groupPosition).size();
     }
 
     @Override
@@ -91,10 +100,8 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View listViewItem, ViewGroup parent) {
-        if(listViewItem==null) {
-            listViewItem = LayoutInflater.from(context).inflate(R.layout.list_item_layout, parent, false);
-        }
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View listViewItem, ViewGroup parent) {
+        listViewItem = LayoutInflater.from(context).inflate(R.layout.list_item_layout, parent, false);
         boolean f=true;
         TextView title=listViewItem.findViewById(R.id.board_title);
         TextView switch1=listViewItem.findViewById(R.id.switchName1);
@@ -114,7 +121,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         SwitchCompat tb7=listViewItem.findViewById(R.id.toggleButton7);
         SwitchCompat tb8=listViewItem.findViewById(R.id.toggleButton8);
         ImageButton buttonEdit=listViewItem.findViewById(R.id.buttonEdit);
-        final int position=rooms.get(groupPosition).indices.get(childPosition);
+        final int position=indicesArrayList.get(groupPosition).get(childPosition).getValue();
         for(int i=8*position;i<8*position+8;i++){
             if(keyPos.charAt(i)!='2'){
                 f=false;
@@ -238,7 +245,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 SwitchBoard switchBoard=switchBoardList.get(position);
-                getListOfRoomsForSpinnerAndShowUpdateDialog(position,switchBoard.title);
+                showUpdateDialog(childPosition,switchBoard.title,groupPosition);
             }
         });
         tb1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -363,27 +370,9 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         });
         return listViewItem;
     }
-
-    public void getListOfRoomsForSpinnerAndShowUpdateDialog(final int pos,final String switchBoardTitle){
-        refProductKey.child(productKey).child("rooms").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot artistSnapshot:snapshot.getChildren()){
-
-                    RoomPojo roomPojo=artistSnapshot.getValue(RoomPojo.class);
-                    rooms.add(roomPojo);
-
-                }
-                showUpdateDialog(pos,switchBoardTitle);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-    private void showUpdateDialog(final int pos,final String switchBoardTitle){
+    private void showUpdateDialog(final int pos, final String switchBoardTitle, final int groupPosition){
+        int positionInitial=indicesArrayList.get(groupPosition).get(pos).value;
+        final int[] positionFinal = {positionInitial};
         AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
         LayoutInflater inflater=LayoutInflater.from(context);
         final View dialogView=inflater.inflate(R.layout.update_dialog,null);
@@ -400,17 +389,31 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         final EditText etTitle=dialogView.findViewById(R.id.dialogTitle);
         final Button updateButton=dialogView.findViewById(R.id.dialogButton);
         Spinner dropdown = dialogView.findViewById(R.id.spinner1);
-        ArrayList<String> items = new ArrayList<>();
+        /*ArrayList<String> items = new ArrayList<>();
         for(int i=0;i<rooms.size();i++){
             items.add(rooms.get(i).getTitle());
         }
+
+         */
         ArrayAdapter adapter;
-        adapter = new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, items);
-//set the spinners adapter to the previously created one.
+        ArrayList<String> roomNames=new ArrayList<>();
+        for(RoomPojo room: rooms){
+            roomNames.add(room.getTitle());
+        }
+        adapter = new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, roomNames);
+        adapter.setDropDownViewResource(
+                android.R.layout
+                        .simple_spinner_dropdown_item);
         dropdown.setAdapter(adapter);
-        dropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                positionFinal[0] =position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
@@ -443,6 +446,11 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                     Toast.makeText(context, "One or more text fields are empty", Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    String key=refProductKey.child(productKey).child("rooms").child(rooms.get(positionFinal[0]).getId()).child("indices").push().getKey();
+                    IndexPojo index=new IndexPojo(key,indicesArrayList.get(groupPosition).get(pos).getValue());
+                    refProductKey.child(productKey).child("rooms").child(rooms.get(positionFinal[0]).getId()).child("indices").child(key).setValue(index);
+                    refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("indices").child(indicesArrayList.get(groupPosition).get(pos).getKey()).removeValue();
+
                     SwitchBoard switchBoard = new SwitchBoard(title,s1,s2,s3,s4,s5,s6,s7,s8);
                     DatabaseReference refSwitchInfo=refSwitchInfo= FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("switchBoards");
                     DatabaseReference dbrEdit = refSwitchInfo.child(pos+"");
@@ -460,7 +468,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void dataSetChanged(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey) {
+    public void dataSetChanged(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey,ArrayList<ArrayList<IndexPojo>> indicesArrayList) {
         super.notifyDataSetChanged();
         this.rooms=rooms;
         this.context=context;
@@ -468,6 +476,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         this.switchBoardList=switchBoardList;
         this.refKeyPos=refKeyPos;
         this.refProductKey=refProductKey;
+        this.indicesArrayList=indicesArrayList;
         notifyDataSetChanged();
     }
 }
