@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,15 +93,81 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        if(convertView==null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.room_card_view, parent, false);
-        }
+    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        convertView = LayoutInflater.from(context).inflate(R.layout.room_card_view, parent, false);
         TextView roomTitle=convertView.findViewById(R.id.roomTitle);
         roomTitle.setText(rooms.get(groupPosition).getTitle());
+        Button editButton=convertView.findViewById(R.id.editRoomButton);
+        if(groupPosition==0){
+            editButton.setVisibility(View.GONE);
+            return convertView;
+        }
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(context, v);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.edit_room_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.renameRoom:
+                                //handle menu1 click
+                                renameRoom(groupPosition);
+                                return true;
+                            case R.id.deleteRoom:
+                                //handle menu2 click
+                                deleteRoom(groupPosition);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popup.show();
+            }
+        });
         return convertView;
     }
-
+    private void renameRoom(final int groupPosition){
+        AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
+        LayoutInflater inflater=context.getLayoutInflater();
+        final View dialogView=inflater.inflate(R.layout.room_dialog,null);
+        dialogBuilder.setView(dialogView);
+        final EditText newRoomTitleEditText=dialogView.findViewById(R.id.newRoomTitle);
+        Button btn=dialogView.findViewById(R.id.btnRoomDialog);
+        btn.setText(R.string.rename_text);
+        final AlertDialog alertDialog=dialogBuilder.create();
+        alertDialog.show();
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(newRoomTitleEditText.getText().equals("")){
+                    Toast.makeText(context, "Text field empty!", Toast.LENGTH_SHORT).show();
+                }else{
+                    refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("title").setValue(newRoomTitleEditText.getText().toString());
+                    Toast.makeText(context, "Room renamed Successfully!", Toast.LENGTH_SHORT).show();
+                    alertDialog.dismiss();
+                }
+            }
+        });
+    }
+    private  void deleteRoom(final int groupPosition){
+        RoomPojo room=rooms.get(groupPosition);
+        ArrayList<IndexPojo> indices=indicesArrayList.get(groupPosition);
+        if(indices==null){
+            refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("indices").removeValue();
+            Toast.makeText(context, "Room deleted successfully", Toast.LENGTH_SHORT).show();
+        }
+        for(IndexPojo index:indices){
+            String key=refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").push().getKey();
+            IndexPojo newIndex=new IndexPojo(key,index.getValue());
+            refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").child(key).setValue(newIndex);
+        }
+        refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).removeValue();
+        Toast.makeText(context, "Room deleted successfully. All switchboards added to stand alone list", Toast.LENGTH_SHORT).show();
+    }
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View listViewItem, ViewGroup parent) {
         listViewItem = LayoutInflater.from(context).inflate(R.layout.list_item_layout, parent, false);
@@ -417,15 +486,15 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
 
             }
         });
-        etTitle.setText(switchBoardList.get(pos).title);
-        ets1.setText(switchBoardList.get(pos).name1);
-        ets2.setText(switchBoardList.get(pos).name2);
-        ets3.setText(switchBoardList.get(pos).name3);
-        ets4.setText(switchBoardList.get(pos).name4);
-        ets5.setText(switchBoardList.get(pos).name5);
-        ets6.setText(switchBoardList.get(pos).name6);
-        ets7.setText(switchBoardList.get(pos).name7);
-        ets8.setText(switchBoardList.get(pos).name8);
+        etTitle.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).title);
+        ets1.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name1);
+        ets2.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name2);
+        ets3.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name3);
+        ets4.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name4);
+        ets5.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name5);
+        ets6.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name6);
+        ets7.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name7);
+        ets8.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name8);
         dialogBuilder.setTitle("Update "+switchBoardTitle);
         final AlertDialog alertDialog=dialogBuilder.create();
         alertDialog.show();

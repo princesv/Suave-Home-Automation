@@ -5,8 +5,8 @@
     <string name="signin_text">Sign in</string>
     <string name="signup_text">Sign up</string>
     <string name="create_new_account_text">Create a new Acount!</string>
-    <string name="logout_text">Log Out</string>
-    <string name="add_line1">Address Line 1</string>
+    <string name="logout_text">Log out</string>
+    <string name="add_line1">Address line 1</string>
     <string name="city">City</string>
     <string name="state">State</string>
     <string name="pincode">Pincode</string>
@@ -16,4 +16,7 @@
     <string name="login_account_text">Login to your account!</string>
     <string name="central_module_name">Smartdom</string>
     <string name="spinner_text">Change room</string>
+    <string name="delete_text">Delete room</string>
+    <string name="rename_text">Rename room</string>
+    <string name="create_room">Create room</string>
 </resources>

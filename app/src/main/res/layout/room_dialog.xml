@@ -11,6 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Create Room"
-        android:id="@+id/btnCreateNewRoom"/>
+        android:id="@+id/btnRoomDialog"/>
 
 </LinearLayout>

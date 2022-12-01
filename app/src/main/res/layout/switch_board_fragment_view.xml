@@ -22,5 +22,7 @@
         android:layout_height="match_parent"
         android:id="@+id/expandableListRooms"
         android:nestedScrollingEnabled="true"
+        android:indicatorEnd="320dp"
+        android:indicatorStart="300dp"
         />
     </LinearLayout>

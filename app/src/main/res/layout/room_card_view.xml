@@ -8,8 +8,11 @@
         app:cardCornerRadius="8dp"
         app:cardMaxElevation="10dp"
         app:cardElevation="10dp"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:background="@color/colorWhite">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -27,4 +30,16 @@
             android:nestedScrollingEnabled="true"
             />
     </LinearLayout>
+        <Button
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_more_vert_black_24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:id="@+id/editRoomButton"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            />
+    </RelativeLayout>
     </androidx.cardview.widget.CardView>

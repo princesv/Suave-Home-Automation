@@ -148,6 +148,7 @@ public class SwitchBoardsFragment extends Fragment {
                     RoomPojo room=artistSnapshot.getValue(RoomPojo.class);
                     rooms.add(room);
                     if(room.getIndices()==null){
+                        indicesArrayList.add(null);
                         continue;
                     }
                     Collection<IndexPojo> indicesCollection=room.indices.values();
@@ -193,13 +194,14 @@ public class SwitchBoardsFragment extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
                 LayoutInflater inflater=context.getLayoutInflater();
-                final View dialogView=inflater.inflate(R.layout.add_room_dialog,null);
+                final View dialogView=inflater.inflate(R.layout.room_dialog,null);
                 dialogBuilder.setView(dialogView);
                 final EditText newRoomTitleEditText=dialogView.findViewById(R.id.newRoomTitle);
-                Button createNewRoomButton=dialogView.findViewById(R.id.btnCreateNewRoom);
+                Button btn=dialogView.findViewById(R.id.btnRoomDialog);
+                btn.setText(R.string.create_room);
                 final AlertDialog alertDialog=dialogBuilder.create();
                 alertDialog.show();
-                createNewRoomButton.setOnClickListener(new View.OnClickListener() {
+                btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if(newRoomTitleEditText.getText().equals("")){
