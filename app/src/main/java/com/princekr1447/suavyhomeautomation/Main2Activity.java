@@ -40,7 +40,6 @@ import java.util.Map;
 
 public class Main2Activity extends AppCompatActivity {
     FirebaseAuth mAuth;
-    FloatingActionButton mFab;
     public static final int LAUNCH_QR_ACTIVITY_FOR_RESULT=11111;
     DatabaseReference refUserId;
     DatabaseReference refProductKey;
@@ -58,7 +57,6 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        mFab=findViewById(R.id.add_fab);
         tabLayout=findViewById(R.id.tabLayout);
         viewPager=findViewById(R.id.viewPager);
         //getSupportActionBar().hide();
@@ -66,13 +64,6 @@ public class Main2Activity extends AppCompatActivity {
         //toolbar.inflateMenu(R.menu.main_menu);
         setSupportActionBar(toolbar);
         mAuth=FirebaseAuth.getInstance();
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
-                startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
-            }
-        });
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         if(sharedPreferences!=null) {
             emailEncoded = sharedPreferences.getString(USERID, "F");
@@ -154,7 +145,7 @@ public class Main2Activity extends AppCompatActivity {
                         initializeCentralModule();
                         initializeSwitchBoards();
                         initializeRoom();
-                        initializeProductKey();
+                        initializeKeypos();
                         Toast.makeText(Main2Activity.this, "Product added successfully!", Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(Main2Activity.this, "Product key already used by some other user", Toast.LENGTH_SHORT).show();
@@ -178,11 +169,11 @@ public class Main2Activity extends AppCompatActivity {
                     refProductKey.child(pk).child("rooms").child(key2).setValue(roomPojo);
                 }
                 void initializeCentralModule(){
-                    CentralModule cm=new CentralModule("untitled",pk);
                     String key=refUserId.child(emailEncoded).child("productKeys").push().getKey();
+                    CentralModule cm=new CentralModule("untitled",pk,key);
                     refUserId.child(emailEncoded).child("productKeys").child(key).setValue(cm);
                 }
-                void initializeProductKey(){
+                void initializeKeypos(){
                     String kp= "";
                     String tmp="01010101";
                     for(int i=0;i<25;i++){
@@ -223,6 +214,10 @@ public class Main2Activity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 return (true);
+            case R.id.addCentralModule:
+                 Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
+                 startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+                 return (true);
         }
         return true;
     }

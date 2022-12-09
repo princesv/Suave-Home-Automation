@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/addCentralModule"
+        app:showAsAction="never"
+        android:title="@string/add_central_module_text"/>
+    <item
         android:id="@+id/logout"
         app:showAsAction="never"
         android:title="@string/logout_text"/>

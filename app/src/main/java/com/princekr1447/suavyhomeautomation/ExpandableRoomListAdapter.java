@@ -2,6 +2,7 @@ package com.princekr1447.suavyhomeautomation;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -31,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -154,19 +156,35 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         });
     }
     private  void deleteRoom(final int groupPosition){
-        RoomPojo room=rooms.get(groupPosition);
-        ArrayList<IndexPojo> indices=indicesArrayList.get(groupPosition);
-        if(indices==null){
-            refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("indices").removeValue();
-            Toast.makeText(context, "Room deleted successfully", Toast.LENGTH_SHORT).show();
+        AsyncTaskDeleteRoom asyncTaskDeleteRoom=new AsyncTaskDeleteRoom();
+        asyncTaskDeleteRoom.execute(groupPosition);
+    }
+    private class AsyncTaskDeleteRoom extends AsyncTask<Integer, String, String> {
+        @Override
+        protected String doInBackground(Integer... groupPosition) {
+            ArrayList<IndexPojo> indices=indicesArrayList.get(groupPosition[0]);
+            if(indices==null){
+                refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition[0]).getId()).child("indices").removeValue();
+                Toast.makeText(context, "Room deleted successfully", Toast.LENGTH_SHORT).show();
+            }
+            for(IndexPojo index:indices){
+                String key=refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").push().getKey();
+                IndexPojo newIndex=new IndexPojo(key,index.getValue());
+                refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").child(key).setValue(newIndex);
+            }
+            refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition[0]).getId()).removeValue();
+            return null;
         }
-        for(IndexPojo index:indices){
-            String key=refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").push().getKey();
-            IndexPojo newIndex=new IndexPojo(key,index.getValue());
-            refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").child(key).setValue(newIndex);
+
+        @Override
+        protected void onPreExecute() {
         }
-        refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).removeValue();
-        Toast.makeText(context, "Room deleted successfully. All switchboards added to stand alone list", Toast.LENGTH_SHORT).show();
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(context, "Room deleted successfully. All switchboards added to stand alone list", Toast.LENGTH_SHORT).show();
+        }
     }
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View listViewItem, ViewGroup parent) {

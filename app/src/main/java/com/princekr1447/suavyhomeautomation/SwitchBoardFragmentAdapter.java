@@ -25,7 +25,7 @@ public class SwitchBoardFragmentAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        SwitchBoardsFragment switchBoardsFragment=new SwitchBoardsFragment(centralModules.get(position).getProductKey(),emailEncoded,myContext);
+        SwitchBoardsFragment switchBoardsFragment=new SwitchBoardsFragment(centralModules.get(position).getProductKey(),centralModules.get(position),emailEncoded,myContext);
         return switchBoardsFragment;
     }
 

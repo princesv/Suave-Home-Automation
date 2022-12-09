@@ -19,4 +19,7 @@
     <string name="delete_text">Delete room</string>
     <string name="rename_text">Rename room</string>
     <string name="create_room">Create room</string>
+    <string name="add_central_module_text">Add new Smartdom</string>
+    <string name="edit_smartdom_name">Edit Smartdom name</string>
+    <string name="create_new_room">Create new room</string>
 </resources>

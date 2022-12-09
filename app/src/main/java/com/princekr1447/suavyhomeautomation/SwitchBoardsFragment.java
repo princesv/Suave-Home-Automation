@@ -8,12 +8,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,17 +50,22 @@ public class SwitchBoardsFragment extends Fragment {
     String keyPos;
     ArrayList<SwitchBoard> switchBoardList;
     ExpandableListView expandableListViewSwitcheBoards;
-    ImageButton buttonEditCentralModuleName;
+    FloatingActionButton buttonEditCentralModuleName;
     String emailEncoded;
     Activity context;
-    Button btnAddRoom;
+    FloatingActionButton btnAddRoom;
     ArrayList<RoomPojo> rooms;
     ArrayList<ArrayList<IndexPojo>> indicesArrayList;
     ExpandableRoomListAdapter expandableRoomListAdapter;
-    public SwitchBoardsFragment(String productKey,String emailEncoded,Activity context) {
+    CentralModule centralModule;
+    FloatingActionButton mainFab;
+    boolean fabClicked;
+    TextView tv1,tv2;
+    public SwitchBoardsFragment(String productKey,CentralModule centralModule,String emailEncoded,Activity context) {
         this.productKey = productKey;
         this.emailEncoded=emailEncoded;
         this.context=context;
+        this.centralModule=centralModule;
     }
 
     public SwitchBoardsFragment(int contentLayoutId, String productKey) {
@@ -68,22 +77,34 @@ public class SwitchBoardsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.switch_board_fragment_view,container,false);
+        fabClicked=false;
         switchBoardList=new ArrayList<>();
         rooms=new ArrayList<>();
         indicesArrayList=new ArrayList<>();
         btnAddRoom=view.findViewById(R.id.btn_add_room);
+        tv1=view.findViewById(R.id.tv1);
+        tv2=view.findViewById(R.id.tv2);
+        mainFab=view.findViewById(R.id.main_fab);
         expandableListViewSwitcheBoards=view.findViewById(R.id.expandableListRooms);
         buttonEditCentralModuleName=view.findViewById(R.id.buttonEditCentralModuleName);
         refUserId= FirebaseDatabase.getInstance().getReference().child("usersId");
         refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
         refKeyPos=FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("keyPos");
+        mainFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setVisibility();
+                setAnimation();
+                fabClicked=!fabClicked;
+            }
+        });
         refProductKey.child(productKey).child("keyPos").orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot cmSnapshot:snapshot.getChildren()) {
                     keyPos = cmSnapshot.getValue(String.class);
                 }
-                if(switchBoardList!=null&&rooms!=null){
+                if(switchBoardList.size()!=0&&rooms.size()!=0&&indicesArrayList.size()!=0){
                     //updateUi(container);
                   /*  int index = listViewSwitcheBoards.getFirstVisiblePosition();
                     View v = listViewSwitcheBoards.getChildAt(0);
@@ -99,6 +120,10 @@ public class SwitchBoardsFragment extends Fragment {
                     }else{
                         expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     }
+
+
+                   // expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
+                   // expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                 }
             }
 
@@ -116,7 +141,7 @@ public class SwitchBoardsFragment extends Fragment {
                     switchBoardList.add(switchBoard);
 
                 }
-                if(keyPos!=null&&rooms!=null) {
+                if(keyPos!=null&&rooms.size()!=0&&indicesArrayList.size()!=0) {
                     //updateUi(container);
                   /*  int index = listViewSwitcheBoards.getFirstVisiblePosition();
                     View v = listViewSwitcheBoards.getChildAt(0);
@@ -132,6 +157,10 @@ public class SwitchBoardsFragment extends Fragment {
                     }else{
                         expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     }
+
+
+                   // expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
+                   // expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                 }
             }
             @Override
@@ -169,13 +198,17 @@ public class SwitchBoardsFragment extends Fragment {
                     });
                     indicesArrayList.add(indices);
                 }
-                if(keyPos!=null&&switchBoardList!=null) {
-                    if(expandableRoomListAdapter==null) {
+                if(keyPos!=null&&rooms.size()!=0&&switchBoardList.size()!=0) {
+                   /* if(expandableRoomListAdapter==null) {
                         expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
+                          expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     }
+
+                    */
+                    expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
+                    expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                 }
                 /*RoomAdapter roomAdapter = new RoomAdapter(rooms,context,keyPos,switchBoardList,refKeyPos);
                 listViewSwitcheBoards.setAdapter(roomAdapter);
@@ -236,8 +269,8 @@ public class SwitchBoardsFragment extends Fragment {
                             Toast.makeText(getContext(), "Text field empty!", Toast.LENGTH_SHORT).show();
                         }else{
                             //   CentralModule cm=new CentralModule(centralModules.get(position).getProductKey(),s1);
-                            CentralModule cmUpdated=new CentralModule(s1,productKey);
-                            refUserId.child(emailEncoded).child("productKeys").child(productKey).setValue(cmUpdated);
+                            CentralModule cmUpdated=new CentralModule(s1,productKey,centralModule.id);
+                            refUserId.child(emailEncoded).child("productKeys").child(centralModule.getId()).setValue(cmUpdated);
                             alertDialog.dismiss();
                         }
                     }
@@ -245,5 +278,37 @@ public class SwitchBoardsFragment extends Fragment {
             }
         });
         return view;
+    }
+    void setVisibility(){
+        if(!fabClicked){
+            btnAddRoom.setVisibility(View.VISIBLE);
+            buttonEditCentralModuleName.setVisibility(View.VISIBLE);
+            tv1.setVisibility(View.VISIBLE);
+            tv2.setVisibility(View.VISIBLE);
+        }else{
+              btnAddRoom.setVisibility(View.INVISIBLE);
+            buttonEditCentralModuleName.setVisibility(View.INVISIBLE);
+            tv1.setVisibility(View.INVISIBLE);
+            tv2.setVisibility(View.INVISIBLE);
+        }
+    }
+    void setAnimation(){
+        if(!fabClicked){
+            Animation animation1= AnimationUtils.loadAnimation(context,R.anim.from_bottom_anim);
+            btnAddRoom.startAnimation(animation1);
+            buttonEditCentralModuleName.startAnimation(animation1);
+            tv1.setAnimation(animation1);
+            tv2.setAnimation(animation1);
+            Animation animation2= AnimationUtils.loadAnimation(context,R.anim.rotate_open_anim);
+            mainFab.startAnimation(animation2);
+        }else{
+            Animation animation1= AnimationUtils.loadAnimation(context,R.anim.to_bottom_anim);
+            btnAddRoom.startAnimation(animation1);
+            buttonEditCentralModuleName.startAnimation(animation1);
+            tv1.setAnimation(animation1);
+            tv2.setAnimation(animation1);
+            Animation animation2= AnimationUtils.loadAnimation(context,R.anim.rotate_close_anim);
+            mainFab.startAnimation(animation2);
+        }
     }
 }
