@@ -458,7 +458,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         return listViewItem;
     }
     private void showUpdateDialog(final int pos, final String switchBoardTitle, final int groupPosition){
-        int positionInitial=indicesArrayList.get(groupPosition).get(pos).value;
+        final int positionInitial=groupPosition;
         final int[] positionFinal = {positionInitial};
         AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
         LayoutInflater inflater=LayoutInflater.from(context);
@@ -533,15 +533,16 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                     Toast.makeText(context, "One or more text fields are empty", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    String key=refProductKey.child(productKey).child("rooms").child(rooms.get(positionFinal[0]).getId()).child("indices").push().getKey();
-                    IndexPojo index=new IndexPojo(key,indicesArrayList.get(groupPosition).get(pos).getValue());
-                    refProductKey.child(productKey).child("rooms").child(rooms.get(positionFinal[0]).getId()).child("indices").child(key).setValue(index);
-                    refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("indices").child(indicesArrayList.get(groupPosition).get(pos).getKey()).removeValue();
-
-                    SwitchBoard switchBoard = new SwitchBoard(title,s1,s2,s3,s4,s5,s6,s7,s8);
-                    DatabaseReference refSwitchInfo=refSwitchInfo= FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("switchBoards");
-                    DatabaseReference dbrEdit = refSwitchInfo.child(pos+"");
+                    SwitchBoard switchBoard = new SwitchBoard(title, s1, s2, s3, s4, s5, s6, s7, s8);
+                    DatabaseReference refSwitchInfo  = FirebaseDatabase.getInstance().getReference().child("productKeys").child(productKey).child("switchBoards");
+                    DatabaseReference dbrEdit = refSwitchInfo.child(indicesArrayList.get(groupPosition).get(pos).getValue() + "");
                     dbrEdit.setValue(switchBoard);
+                    if(positionFinal[0]!=positionInitial) {
+                        String key = refProductKey.child(productKey).child("rooms").child(rooms.get(positionFinal[0]).getId()).child("indices").push().getKey();
+                        IndexPojo index = new IndexPojo(key, indicesArrayList.get(groupPosition).get(pos).getValue());
+                        refProductKey.child(productKey).child("rooms").child(rooms.get(positionFinal[0]).getId()).child("indices").child(key).setValue(index);
+                        refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("indices").child(indicesArrayList.get(groupPosition).get(pos).getKey()).removeValue();
+                    }
                     Toast.makeText(context, "Update Successful", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
                 }
