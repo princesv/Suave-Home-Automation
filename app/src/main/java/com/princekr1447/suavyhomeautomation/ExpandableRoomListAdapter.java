@@ -326,6 +326,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         if(f){
             title.setVisibility(View.GONE);
             buttonEdit.setVisibility(View.GONE);
+            listViewItem.setVisibility(View.GONE);
             return listViewItem;
         }
         buttonEdit.setOnClickListener(new View.OnClickListener() {

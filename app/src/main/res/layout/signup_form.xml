@@ -79,32 +79,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textState"
         app:layout_constraintVertical_bias="0.069" />
-    <ImageView
-        android:id="@+id/scanQrButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/qr_image"
-        android:onClick="openQrScanActivity"
-        android:background="@drawable/qr_button_shape"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editPincode"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.069"/>
-    <TextView
-        android:id="@+id/scanQrText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="@string/product_key"
-        android:inputType="text"
-        android:gravity="center"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scanQrButton"
-        app:layout_constraintVertical_bias="0.069" />
 
     <Button
         android:id="@+id/buttonAccount"
@@ -114,12 +88,13 @@
         android:text="@string/signup_text"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toTopOf="@+id/goToLogIn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scanQrText"
-        app:layout_constraintVertical_bias="0.140" />
+        app:layout_constraintTop_toBottomOf="@+id/editPincode"
+        app:layout_constraintVertical_bias="0.288" />
+
     <TextView
         android:id="@+id/goToLogIn"
         android:layout_width="wrap_content"

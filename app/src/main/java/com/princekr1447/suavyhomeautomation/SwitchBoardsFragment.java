@@ -207,6 +207,31 @@ public class SwitchBoardsFragment extends Fragment {
                     }
 
                     */
+                    ArrayList<ArrayList<IndexPojo>> tempIndicesArrayList=new ArrayList<>();
+                   for(int i=0;i<indicesArrayList.size();i++){
+                       if(indicesArrayList.get(i)==null){
+                           tempIndicesArrayList.add(null);
+                           continue;
+                       }
+                       ArrayList<IndexPojo> tmp=new ArrayList<>();
+                       for(int j=0;j<indicesArrayList.get(i).size();j++){
+                           int position=indicesArrayList.get(i).get(j).getValue();
+                           boolean ff=true;
+                           for(int k=8*position;k<8*position+8;k++){
+                               if(keyPos.charAt(k)!='2'){
+                                   ff=false;
+                                   break;
+                               }
+                           }
+                           if(ff){
+                               continue;
+                           }
+                           tmp.add(indicesArrayList.get(i).get(j));
+                       }
+                       tempIndicesArrayList.add(tmp);
+                   }
+                   indicesArrayList.clear();
+                   indicesArrayList=tempIndicesArrayList;
                     expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
                     expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                 }

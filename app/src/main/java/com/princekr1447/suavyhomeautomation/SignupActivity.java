@@ -44,7 +44,6 @@ public class SignupActivity extends AppCompatActivity {
     EditText editTextEmail;
     EditText editTextPassword;
     EditText editTextPincode;
-    TextView textProductKey;
     EditText editTextAddressLine1;
     EditText editTextCity;
     EditText editTextCountry;
@@ -75,7 +74,6 @@ public class SignupActivity extends AppCompatActivity {
         editTextEmail=findViewById(R.id.editEmail);
         editTextPassword=findViewById(R.id.editPass);
         editTextPincode=findViewById(R.id.editPincode);
-        textProductKey=findViewById(R.id.scanQrText);
         editTextAddressLine1=findViewById(R.id.editAddressLine1);
         editTextCity=findViewById(R.id.editCity);
         editTextCountry=findViewById(R.id.textState);

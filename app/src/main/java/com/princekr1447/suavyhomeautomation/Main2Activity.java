@@ -145,7 +145,7 @@ public class Main2Activity extends AppCompatActivity {
                         initializeCentralModule();
                         initializeSwitchBoards();
                         initializeRoom();
-                        initializeKeypos();
+                       // initializeKeypos();
                         Toast.makeText(Main2Activity.this, "Product added successfully!", Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(Main2Activity.this, "Product key already used by some other user", Toast.LENGTH_SHORT).show();
@@ -175,7 +175,7 @@ public class Main2Activity extends AppCompatActivity {
                 }
                 void initializeKeypos(){
                     String kp= "";
-                    String tmp="01010101";
+                    String tmp="22222222";
                     for(int i=0;i<25;i++){
                         kp=kp.concat(tmp);
                     }

@@ -29,7 +29,6 @@ public class QrScannerActivity extends AppCompatActivity {
     public CameraSource cameraSource;
     String intentData = "";
     SurfaceView surfaceView;
-    TextView textViewBarCodeValue;
 
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
