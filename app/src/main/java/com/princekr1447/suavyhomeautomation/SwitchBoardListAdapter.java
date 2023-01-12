@@ -56,15 +56,6 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         rooms=new ArrayList<>();
         LayoutInflater inflater=context.getLayoutInflater();
         View listViewItem=inflater.inflate(R.layout.list_item_layout,null,true);
-        if(keyPos.charAt(8*position)=='2'){
-        }
-        boolean f=true;
-        for(int i=8*position;i<8*position+8;i++){
-            if(keyPos.charAt(i)!='2'){
-                f=false;
-                break;
-            }
-        }
         TextView title=listViewItem.findViewById(R.id.board_title);
         TextView switch1=listViewItem.findViewById(R.id.switchName1);
         TextView switch2=listViewItem.findViewById(R.id.switchName2);
@@ -190,11 +181,6 @@ public class SwitchBoardListAdapter extends ArrayAdapter<SwitchBoard>{
         }else{
             tb8.setVisibility(View.GONE);
             switch8.setVisibility(View.GONE);
-        }
-        if(f){
-            title.setVisibility(View.GONE);
-            buttonEdit.setVisibility(View.GONE);
-            return listViewItem;
         }
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override

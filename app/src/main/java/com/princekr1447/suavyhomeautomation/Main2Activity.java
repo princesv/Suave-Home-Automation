@@ -59,6 +59,7 @@ public class Main2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
         tabLayout=findViewById(R.id.tabLayout);
         viewPager=findViewById(R.id.viewPager);
+        tabLayout.setTabTextColors(getResources().getColor(R.color.colorAccent),getResources().getColor(R.color.colorAccent));
         //getSupportActionBar().hide();
         toolbar=findViewById(R.id.toolBar);
         //toolbar.inflateMenu(R.menu.main_menu);

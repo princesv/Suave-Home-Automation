@@ -11,7 +11,7 @@
     app:cardMaxElevation="10dp"
     app:cardElevation="10dp"
     android:layout_margin="8dp"
-    app:cardBackgroundColor="@color/colorPrimaryLight">
+    app:cardBackgroundColor="@color/colorPrimary">
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/edit_icon"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:layout_centerVertical="true"
             />
     </RelativeLayout>
     <LinearLayout
