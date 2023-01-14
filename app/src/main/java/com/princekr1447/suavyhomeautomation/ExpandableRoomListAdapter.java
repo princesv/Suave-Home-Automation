@@ -3,6 +3,7 @@ package com.princekr1447.suavyhomeautomation;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -164,8 +165,8 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         protected String doInBackground(Integer... groupPosition) {
             ArrayList<IndexPojo> indices=indicesArrayList.get(groupPosition[0]);
             if(indices==null){
-                refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition[0]).getId()).child("indices").removeValue();
-                Toast.makeText(context, "Room deleted successfully", Toast.LENGTH_SHORT).show();
+                refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition[0]).getId()).removeValue();
+                return "0";
             }
             for(IndexPojo index:indices){
                 String key=refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").push().getKey();
@@ -173,7 +174,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                 refProductKey.child(productKey).child("rooms").child(rooms.get(0).getId()).child("indices").child(key).setValue(newIndex);
             }
             refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition[0]).getId()).removeValue();
-            return null;
+            return "1";
         }
 
         @Override
@@ -183,7 +184,11 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Toast.makeText(context, "Room deleted successfully. All switchboards added to stand alone list", Toast.LENGTH_SHORT).show();
+            if(s=="0"){
+                Toast.makeText(context, "Room deleted successfully!", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(context, "Room deleted successfully. All switchboards added to stand alone list", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     @Override
@@ -338,122 +343,225 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         });
         tb1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String newKeyPos;
-                if(isChecked){
-                    newKeyPos="";
-                    if(position==0){
-                        newKeyPos='1'+keyPos.substring(1);
-                    }else{
-                        newKeyPos=keyPos.substring(0,8*position)+'1'+keyPos.substring(8*position+1);
-                    }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position)+'1'+keyPos.substring(8*position+1);
+                            }
 
-                }else{
-                    newKeyPos="";
-                    if(position==0){
-                        newKeyPos='0'+keyPos.substring(1);
-                    }else{
-                        newKeyPos=keyPos.substring(0,8*position)+'0'+keyPos.substring(8*position+1);
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position)+'0'+keyPos.substring(8*position+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
                     }
-                }
-                refKeyPos.push().setValue(newKeyPos);
+                }, 200);
             }
         });
         tb2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+1)+'1'+keyPos.substring(8*position+1+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+1)+'0'+keyPos.substring(8*position+1+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+1)+'1'+keyPos.substring(8*position+1+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+1)+'0'+keyPos.substring(8*position+1+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });
         tb3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+2)+'1'+keyPos.substring(8*position+2+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+2)+'0'+keyPos.substring(8*position+2+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+2)+'1'+keyPos.substring(8*position+2+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+2)+'0'+keyPos.substring(8*position+2+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });
         tb4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+3)+'1'+keyPos.substring(8*position+3+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+3)+'0'+keyPos.substring(8*position+3+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+3)+'1'+keyPos.substring(8*position+3+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+3)+'0'+keyPos.substring(8*position+3+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });
         tb5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+4)+'1'+keyPos.substring(8*position+4+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+4)+'0'+keyPos.substring(8*position+4+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+4)+'1'+keyPos.substring(8*position+4+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+4)+'0'+keyPos.substring(8*position+4+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });
         tb6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+5)+'1'+keyPos.substring(8*position+5+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+5)+'0'+keyPos.substring(8*position+5+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+5)+'1'+keyPos.substring(8*position+5+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+5)+'0'+keyPos.substring(8*position+5+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });tb7.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+6)+'1'+keyPos.substring(8*position+6+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+6)+'0'+keyPos.substring(8*position+6+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+6)+'1'+keyPos.substring(8*position+6+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+6)+'0'+keyPos.substring(8*position+6+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });
         tb8.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+7)+'1'+keyPos.substring(8*position+7+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }else{
-                    String newKeyPos="";
-                    newKeyPos=keyPos.substring(0,8*position+7)+'0'+keyPos.substring(8*position+7+1);
-                    refKeyPos.push().setValue(newKeyPos);
-                }
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        String newKeyPos;
+                        if(isChecked){
+                            if(position==0){
+                                newKeyPos='1'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+7)+'1'+keyPos.substring(8*position+7+1);
+                            }
+
+                        }else{
+                            if(position==0){
+                                newKeyPos='0'+keyPos.substring(1);
+                            }else{
+                                newKeyPos=keyPos.substring(0,8*position+7)+'0'+keyPos.substring(8*position+7+1);
+                            }
+                        }
+                        refKeyPos.push().setValue(newKeyPos);
+                    }
+                }, 200);
             }
         });
         return listViewItem;

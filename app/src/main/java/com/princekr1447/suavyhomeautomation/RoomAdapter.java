@@ -41,8 +41,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
         holder.roomTitle.setText(rooms.get(position).getTitle());
         SwitchBoardListAdapter adapter=new SwitchBoardListAdapter(context,switchBoardList,keyPos,refKeyPos,productKey);
         holder.listSwitchBoards.setAdapter(adapter);
-        boolean isExpandable=rooms.get(position).getExpandable();
-        holder.listSwitchBoards.setVisibility(isExpandable?View.VISIBLE:View.GONE);
+      //  boolean isExpandable=rooms.get(position).getExpandable();
+       // holder.listSwitchBoards.setVisibility(isExpandable?View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
             roomParentView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    rooms.get(getAdapterPosition()).setExpandable(!(rooms.get(getAdapterPosition()).getExpandable()));
+                   // rooms.get(getAdapterPosition()).setExpandable(!(rooms.get(getAdapterPosition()).getExpandable()));
                     notifyItemChanged(getAdapterPosition());
                 }
             });

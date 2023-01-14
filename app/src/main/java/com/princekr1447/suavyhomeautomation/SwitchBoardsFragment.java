@@ -3,6 +3,7 @@ package com.princekr1447.suavyhomeautomation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Inflater;
@@ -56,6 +58,7 @@ public class SwitchBoardsFragment extends Fragment {
     FloatingActionButton btnAddRoom;
     ArrayList<RoomPojo> rooms;
     ArrayList<ArrayList<IndexPojo>> indicesArrayList;
+    ArrayList<ArrayList<IndexPojo>> liveIndicesArrayList;
     ExpandableRoomListAdapter expandableRoomListAdapter;
     CentralModule centralModule;
     FloatingActionButton mainFab;
@@ -81,6 +84,7 @@ public class SwitchBoardsFragment extends Fragment {
         switchBoardList=new ArrayList<>();
         rooms=new ArrayList<>();
         indicesArrayList=new ArrayList<>();
+        liveIndicesArrayList=new ArrayList<>();
         btnAddRoom=view.findViewById(R.id.btn_add_room);
         tv1=view.findViewById(R.id.tv1);
         tv2=view.findViewById(R.id.tv2);
@@ -105,25 +109,8 @@ public class SwitchBoardsFragment extends Fragment {
                     keyPos = cmSnapshot.getValue(String.class);
                 }
                 if(switchBoardList.size()!=0&&rooms.size()!=0&&indicesArrayList.size()!=0){
-                    //updateUi(container);
-                  /*  int index = listViewSwitcheBoards.getFirstVisiblePosition();
-                    View v = listViewSwitcheBoards.getChildAt(0);
-                    int top = (v == null) ? 0 : (v.getTop() - listViewSwitcheBoards.getPaddingTop());
-                    SwitchBoardListAdapter adapter=new SwitchBoardListAdapter(getActivity(),switchBoardList,keyPos,refKeyPos,productKey);
-                    listViewSwitcheBoards.setAdapter(adapter);
-                    listViewSwitcheBoards.setSelectionFromTop(index, top);
-
-                   */
-                    if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
-                        expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
-                    }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
-                    }
-
-
-                   // expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
-                   // expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+                    AsyncTaskKeyPosUpdated asyncTaskKeyPosUpdated=new AsyncTaskKeyPosUpdated();
+                    asyncTaskKeyPosUpdated.execute("0");
                 }
             }
 
@@ -152,10 +139,10 @@ public class SwitchBoardsFragment extends Fragment {
 
                    */
                     if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList);
                     }
 
 
@@ -171,33 +158,8 @@ public class SwitchBoardsFragment extends Fragment {
         refProductKey.child(productKey).child("rooms").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                rooms.clear();
-                indicesArrayList.clear();
-                for(DataSnapshot artistSnapshot:snapshot.getChildren()){
-                    RoomPojo room=artistSnapshot.getValue(RoomPojo.class);
-                    rooms.add(room);
-                    if(room.getIndices()==null){
-                        indicesArrayList.add(null);
-                        continue;
-                    }
-                    Collection<IndexPojo> indicesCollection=room.indices.values();
-                    ArrayList<IndexPojo> indices=new ArrayList<>();
-                    for (IndexPojo index : indicesCollection){
-                        indices.add(index);
-                    }
-                    Collections.sort(indices, new Comparator<IndexPojo>(){
-                        public int compare(IndexPojo obj1, IndexPojo obj2) {
-                            // ## Ascending order
-                            return obj1.getKey().compareToIgnoreCase(obj2.getKey()); // To compare string values
-                            // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
-
-                            // ## Descending order
-                            // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
-                            // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
-                        }
-                    });
-                    indicesArrayList.add(indices);
-                }
+                AsyncTaskGetRoomsCollection asyncTaskGetRoomsCollection= new AsyncTaskGetRoomsCollection();
+                asyncTaskGetRoomsCollection.execute(snapshot);
                 if(keyPos!=null&&rooms.size()!=0&&switchBoardList.size()!=0) {
                    /* if(expandableRoomListAdapter==null) {
                         expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
@@ -207,33 +169,10 @@ public class SwitchBoardsFragment extends Fragment {
                     }
 
                     */
-                    ArrayList<ArrayList<IndexPojo>> tempIndicesArrayList=new ArrayList<>();
-                   for(int i=0;i<indicesArrayList.size();i++){
-                       if(indicesArrayList.get(i)==null){
-                           tempIndicesArrayList.add(null);
-                           continue;
-                       }
-                       ArrayList<IndexPojo> tmp=new ArrayList<>();
-                       for(int j=0;j<indicesArrayList.get(i).size();j++){
-                           int position=indicesArrayList.get(i).get(j).getValue();
-                           boolean ff=true;
-                           for(int k=8*position;k<8*position+8;k++){
-                               if(keyPos.charAt(k)!='2'){
-                                   ff=false;
-                                   break;
-                               }
-                           }
-                           if(ff){
-                               continue;
-                           }
-                           tmp.add(indicesArrayList.get(i).get(j));
-                       }
-                       tempIndicesArrayList.add(tmp);
-                   }
-                   indicesArrayList.clear();
-                   indicesArrayList=tempIndicesArrayList;
-                    expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,indicesArrayList);
-                    expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+                   // AsyncTaskKeyPosUpdated asyncTaskKeyPosUpdated=new AsyncTaskKeyPosUpdated();
+                   // asyncTaskKeyPosUpdated.execute("1");
+                   // expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList);
+                   // expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                 }
                 /*RoomAdapter roomAdapter = new RoomAdapter(rooms,context,keyPos,switchBoardList,refKeyPos);
                 listViewSwitcheBoards.setAdapter(roomAdapter);
@@ -266,9 +205,15 @@ public class SwitchBoardsFragment extends Fragment {
                             Toast.makeText(getContext(), "Text field empty!", Toast.LENGTH_SHORT).show();
                         }else{
                             String key=refProductKey.child(productKey).child("rooms").push().getKey();
-                            refProductKey.child(productKey).child("rooms").child(key).child("title").setValue(newRoomTitleEditText.getText().toString());
-                            refProductKey.child(productKey).child("rooms").child(key).child("id").setValue(key);
-                            Toast.makeText(getContext(), "Room created Successfully!", Toast.LENGTH_SHORT).show();
+                            if(key!=null) {
+                                RoomPojo roomPojo=new RoomPojo(newRoomTitleEditText.getText().toString(),null ,key);
+                              //  refProductKey.child(productKey).child("rooms").child(key).child("title").setValue(newRoomTitleEditText.getText().toString());
+                               // refProductKey.child(productKey).child("rooms").child(key).child("id").setValue(key);
+                                refProductKey.child(productKey).child("rooms").child(key).setValue(roomPojo);
+                                Toast.makeText(getContext(), "Room created Successfully!", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(getContext(), "Failed to create room. try again!", Toast.LENGTH_SHORT).show();
+                            }
                             alertDialog.dismiss();
                         }
                     }
@@ -334,6 +279,100 @@ public class SwitchBoardsFragment extends Fragment {
             tv2.setAnimation(animation1);
             Animation animation2= AnimationUtils.loadAnimation(context,R.anim.rotate_close_anim);
             mainFab.startAnimation(animation2);
+        }
+    }
+    private class AsyncTaskKeyPosUpdated extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            liveIndicesArrayList.clear();
+            for(int i=0;i<indicesArrayList.size();i++){
+                ArrayList<IndexPojo> tmp=new ArrayList<>();
+                if(indicesArrayList.get(i)==null){
+                    liveIndicesArrayList.add(null);
+                    continue;
+                }
+                for(int j=0;j<indicesArrayList.get(i).size();j++){
+                    int position=indicesArrayList.get(i).get(j).getValue();
+                    boolean ff=true;
+                    for(int k=8*position;k<8*position+8;k++){
+                        if(keyPos.charAt(k)!='2'){
+                            ff=false;
+                            break;
+                        }
+                    }
+                    if(ff){
+                        continue;
+                    }
+                    tmp.add(indicesArrayList.get(i).get(j));
+                }
+                if(tmp.size()==0){
+                    liveIndicesArrayList.add(null);
+                }else {
+                    liveIndicesArrayList.add(tmp);
+                }
+            }
+            return strings[0];
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if(s.equals("0")) {
+                if (expandableRoomListAdapter == null) {
+                    expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                    expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+                } else {
+                    expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                }
+            }else{
+                expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
+            }
+        }
+    }
+    private class AsyncTaskGetRoomsCollection extends AsyncTask<DataSnapshot, String, String>{
+
+        @Override
+        protected String doInBackground(DataSnapshot... snapshots) {
+            DataSnapshot snapshot=snapshots[0];
+            rooms.clear();
+            indicesArrayList.clear();
+            for(DataSnapshot artistSnapshot:snapshot.getChildren()){
+                RoomPojo room=artistSnapshot.getValue(RoomPojo.class);
+                rooms.add(room);
+                if(room.getIndices()==null){
+                    indicesArrayList.add(null);
+                    continue;
+                }
+                Collection<IndexPojo> indicesCollection=room.indices.values();
+                ArrayList<IndexPojo> indices=new ArrayList<>();
+                for (IndexPojo index : indicesCollection){
+                    indices.add(index);
+                }
+                Collections.sort(indices, new Comparator<IndexPojo>(){
+                    public int compare(IndexPojo obj1, IndexPojo obj2) {
+                        // ## Ascending order
+                        return obj1.getKey().compareToIgnoreCase(obj2.getKey()); // To compare string values
+                        // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
+
+                        // ## Descending order
+                        // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                        // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
+                    }
+                });
+                indicesArrayList.add(indices);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            AsyncTaskKeyPosUpdated asyncTaskKeyPosUpdated=new AsyncTaskKeyPosUpdated();
+            asyncTaskKeyPosUpdated.execute("1");
         }
     }
 }

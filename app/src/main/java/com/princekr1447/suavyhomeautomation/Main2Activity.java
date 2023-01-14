@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,12 +54,14 @@ public class Main2Activity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     Toolbar toolbar;
+    ShimmerFrameLayout shimmerFrameLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         tabLayout=findViewById(R.id.tabLayout);
         viewPager=findViewById(R.id.viewPager);
+        shimmerFrameLayout=findViewById(R.id.idShimmerLayoutView);
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorAccent),getResources().getColor(R.color.colorAccent));
         //getSupportActionBar().hide();
         toolbar=findViewById(R.id.toolBar);
@@ -75,6 +78,9 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 centralModules.clear();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                viewPager.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.VISIBLE);
                 for(DataSnapshot artistSnapshot:snapshot.getChildren()){
 
                     CentralModule cm=artistSnapshot.getValue(CentralModule.class);
