@@ -25,31 +25,20 @@ public class SigninActivity extends AppCompatActivity {
     EditText signin_password;
     Button signin_button;
     private FirebaseAuth mAuth;
-    SharedPreferences sharedPreferences;
-    public static final String SHARED_PREF="sharedPrefs";
     public static final String SIGNEDIN="signedIn";
     public static final String USERID="userId";
-    private boolean isSignedIn= false;
+    SharedPreferences sharedPreferences;
+    public static final String SHARED_PREF="sharedPrefs";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-        sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
-        final SharedPreferences.Editor editor=sharedPreferences.edit();
-        mAuth=FirebaseAuth.getInstance();
-        isSignedIn = sharedPreferences.getBoolean(SIGNEDIN,false);
-
-        if(isSignedIn) {
-            Intent intent=new Intent(SigninActivity.this,Main2Activity.class);
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
         go_to_sign_up=findViewById(R.id.go_to_sign_up);
         sign_in_username=findViewById(R.id.signin_username);
         signin_password=findViewById(R.id.signin_password);
         signin_button=findViewById(R.id.signin_button);
-
+        final SharedPreferences.Editor editor=sharedPreferences.edit();
         go_to_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
