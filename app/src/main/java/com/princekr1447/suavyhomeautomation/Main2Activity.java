@@ -26,9 +26,16 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +56,7 @@ public class Main2Activity extends AppCompatActivity {
     String emailEncoded;
     public static final String SHARED_PREF="sharedPrefs";
     public static final String USERID="userId";
+    public static final String IS_GOOGLE_LOGIN="googleLogin";
     SharedPreferences sharedPreferences;
     ArrayList<CentralModule> centralModules=new ArrayList<>();
     public static final String SIGNEDIN="signedIn";
@@ -56,6 +64,10 @@ public class Main2Activity extends AppCompatActivity {
     ViewPager viewPager;
     Toolbar toolbar;
     LinearLayout shimmerFrameLayout;
+    boolean isGoogleLogin;
+
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +81,20 @@ public class Main2Activity extends AppCompatActivity {
         //toolbar.inflateMenu(R.menu.main_menu);
         setSupportActionBar(toolbar);
         mAuth=FirebaseAuth.getInstance();
+        FirebaseUser user=mAuth.getCurrentUser();
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         if(sharedPreferences!=null) {
-            emailEncoded = sharedPreferences.getString(USERID, "F");
+           // emailEncoded = sharedPreferences.getString(USERID, "F");
+           // isGoogleLogin=sharedPreferences.getBoolean(IS_GOOGLE_LOGIN,false);
         }
+        emailEncoded=user.getUid();
         refUserId= FirebaseDatabase.getInstance().getReference().child("usersId");
         refProductKey=FirebaseDatabase.getInstance().getReference().child("productKeys");
+
+        gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc= GoogleSignIn.getClient(this,gso);
+        GoogleSignInAccount account=GoogleSignIn.getLastSignedInAccount(this);
+
         refUserId.child(emailEncoded).child("productKeys").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -153,7 +173,7 @@ public class Main2Activity extends AppCompatActivity {
                         initializeCentralModule();
                         initializeSwitchBoards();
                         initializeRoom();
-                       // initializeKeypos();
+                        initializeKeypos();
                         Toast.makeText(Main2Activity.this, "Product added successfully!", Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(Main2Activity.this, "Product key already used by some other user", Toast.LENGTH_SHORT).show();
@@ -214,10 +234,10 @@ public class Main2Activity extends AppCompatActivity {
         final SharedPreferences.Editor editor=sharedPreferences.edit();
         switch (item.getItemId()) {
             case R.id.logout:
+                finish();
                 mAuth.signOut();
-                editor.putBoolean(SIGNEDIN,false);
-                editor.commit();
-                Intent intent=new Intent(Main2Activity.this,SigninActivity.class);
+                gsc.signOut();
+                Intent intent = new Intent(Main2Activity.this, SignupOrSigninActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

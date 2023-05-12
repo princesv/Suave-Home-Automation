@@ -13,6 +13,10 @@
         android:roundIcon="@mipmap/suavy_technologies_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SignUpModule.SignupDetailsActivity"></activity>
+        <activity android:name=".SignUpModule.EnterOtpActivity" />
+        <activity android:name=".SignUpModule.PhoneActivity" />
+        <activity android:name=".SignupOrSigninActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +26,7 @@
         </activity>
         <activity android:name=".Main2Activity" />
         <activity android:name=".QrScannerActivity" />
-        <activity android:name=".SigninActivity">
-        </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".SigninActivity" />
         <activity android:name=".SignupActivity" />
     </application>
 

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SplashActivity extends AppCompatActivity {
     public static final String SHARED_PREF="sharedPrefs";
@@ -22,7 +23,11 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         mAuth= FirebaseAuth.getInstance();
-        isSignedIn = sharedPreferences.getBoolean(SIGNEDIN,false);
+        //isSignedIn = sharedPreferences.getBoolean(SIGNEDIN,false);
+        FirebaseUser user=mAuth.getCurrentUser();
+        if(user!=null){
+            isSignedIn=true;
+        }
         new Handler().postDelayed(new Runnable() {
 
 
@@ -34,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }else{
-                    Intent intent=new Intent(SplashActivity.this,SigninActivity.class);
+                    Intent intent=new Intent(SplashActivity.this,SignupOrSigninActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }

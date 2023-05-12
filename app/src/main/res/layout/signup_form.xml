@@ -1,84 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="10dp"
+    android:layout_margin="8dp"
+    android:alpha="0.5">
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="8dp">
 
 
     <EditText
-        android:id="@+id/editEmail"
-        android:layout_width="wrap_content"
+        android:id="@+id/emailSignup"
+        android:layout_width="256dp"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/email_hint_text"
-        android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.032" />
+        app:layout_constraintVertical_bias="0.106"
+        android:hint="@string/email_hint_text"/>
 
     <EditText
-        android:id="@+id/editPass"
-        android:layout_width="wrap_content"
+        android:id="@+id/passwordSignup"
+        android:layout_width="256dp"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/password_hint_text"
-        android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editEmail"
-        app:layout_constraintVertical_bias="0.069" />
-    <EditText
-        android:id="@+id/editAddressLine1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/add_line1"
-        android:inputType="textPostalAddress"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editPass"
-        app:layout_constraintVertical_bias="0.069" />
-    <EditText
-        android:id="@+id/editCity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="5"
-        android:hint="@string/city"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textState"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editAddressLine1"
-        app:layout_constraintVertical_bias="0.069" />
-    <EditText
-        android:id="@+id/textState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="5"
-        android:hint="@string/state"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/editCity"
-        app:layout_constraintTop_toBottomOf="@+id/editAddressLine1"
-        app:layout_constraintVertical_bias="0.069" />
-    <EditText
-        android:id="@+id/editPincode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/pincode"
-        android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textState"
-        app:layout_constraintVertical_bias="0.069" />
+        app:layout_constraintTop_toBottomOf="@+id/emailSignup"
+        app:layout_constraintVertical_bias="0.113"
+        android:hint="@string/password_hint_text"/>
 
     <Button
         android:id="@+id/buttonAccount"
@@ -92,39 +50,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editPincode"
-        app:layout_constraintVertical_bias="0.288" />
-
-    <TextView
-        android:id="@+id/goToLogIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/signup_form"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:scrollbarSize="64sp"
-        android:text="@string/go_to_login"
-        android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonAccount"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:onClick="openSignin"/>
+        app:layout_constraintTop_toBottomOf="@+id/passwordSignup"
+        app:layout_constraintVertical_bias="0.201"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_new_account_text"
+        android:text="@string/credentials"
         android:textColor="#303F9F"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.06" />
+        app:layout_constraintVertical_bias="0.143" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

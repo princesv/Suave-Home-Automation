@@ -220,6 +220,12 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                 break;
             }
         }
+        if(f){
+            title.setVisibility(View.GONE);
+            buttonEdit.setVisibility(View.GONE);
+            listViewItem.setVisibility(View.GONE);
+            return listViewItem;
+        }
         SwitchBoard switchBoard=switchBoardList.get(position);
         title.setVisibility(View.VISIBLE);
         buttonEdit.setVisibility(View.VISIBLE);
@@ -328,12 +334,6 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
             tb8.setVisibility(View.GONE);
             switch8.setVisibility(View.GONE);
         }
-        if(f){
-            title.setVisibility(View.GONE);
-            buttonEdit.setVisibility(View.GONE);
-            listViewItem.setVisibility(View.GONE);
-            return listViewItem;
-        }
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -351,18 +351,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position)+'1'+keyPos.substring(8*position+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position)+'1'+keyPos.substring(8*position+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position)+'0'+keyPos.substring(8*position+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position)+'0'+keyPos.substring(8*position+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -379,18 +371,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+1)+'1'+keyPos.substring(8*position+1+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+1)+'1'+keyPos.substring(8*position+1+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+1)+'0'+keyPos.substring(8*position+1+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+1)+'0'+keyPos.substring(8*position+1+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -407,18 +391,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+2)+'1'+keyPos.substring(8*position+2+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+2)+'1'+keyPos.substring(8*position+2+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+2)+'0'+keyPos.substring(8*position+2+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+2)+'0'+keyPos.substring(8*position+2+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -435,18 +411,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+3)+'1'+keyPos.substring(8*position+3+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+3)+'1'+keyPos.substring(8*position+3+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+3)+'0'+keyPos.substring(8*position+3+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+3)+'0'+keyPos.substring(8*position+3+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -463,18 +431,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+4)+'1'+keyPos.substring(8*position+4+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+4)+'1'+keyPos.substring(8*position+4+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+4)+'0'+keyPos.substring(8*position+4+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+4)+'0'+keyPos.substring(8*position+4+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -491,18 +451,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+5)+'1'+keyPos.substring(8*position+5+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+5)+'1'+keyPos.substring(8*position+5+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+5)+'0'+keyPos.substring(8*position+5+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+5)+'0'+keyPos.substring(8*position+5+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -518,18 +470,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+6)+'1'+keyPos.substring(8*position+6+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+6)+'1'+keyPos.substring(8*position+6+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+6)+'0'+keyPos.substring(8*position+6+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+6)+'0'+keyPos.substring(8*position+6+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }
@@ -546,18 +490,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         // Do something after 5s = 5000ms
                         String newKeyPos;
                         if(isChecked){
-                            if(position==0){
-                                newKeyPos='1'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+7)+'1'+keyPos.substring(8*position+7+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+7)+'1'+keyPos.substring(8*position+7+1);
 
                         }else{
-                            if(position==0){
-                                newKeyPos='0'+keyPos.substring(1);
-                            }else{
-                                newKeyPos=keyPos.substring(0,8*position+7)+'0'+keyPos.substring(8*position+7+1);
-                            }
+                            newKeyPos=keyPos.substring(0,8*position+7)+'0'+keyPos.substring(8*position+7+1);
                         }
                         refKeyPos.push().setValue(newKeyPos);
                     }

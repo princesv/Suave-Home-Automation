@@ -15,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "364931988912-qj0ujgqgp7l5h5p8cdi4p1k1a7pmq94p.apps.googleusercontent.com",
+          "client_id": "364931988912-ogkqr9vu4g52rdmcn502m5fsl29fcnhv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.princekr1447.suavyhomeautomation",
+            "certificate_hash": "4872cbb7a7581bdd12411ce4285ad9076bd814d1"
+          }
+        },
+        {
+          "client_id": "364931988912-sq3tpalb9emj8972ecg3kjmrnom4pes0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

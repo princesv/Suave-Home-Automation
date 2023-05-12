@@ -1,15 +1,18 @@
 <resources>
+    <string name="credentials">Provide credentials</string>
     <string name="app_name">Suavy Home Automation</string>
     <string name="email_hint_text">Email</string>
     <string name="password_hint_text">Password</string>
-    <string name="signin_text">Sign in</string>
-    <string name="signup_text">Sign up</string>
-    <string name="create_new_account_text">Create a new Acount!</string>
+    <string name="signin_text">Login to existing account</string>
+    <string name="signup_text">Create new account</string>
+    <string name="address_details">Fill address details</string>
     <string name="logout_text">Log out</string>
-    <string name="add_line1">Address line 1</string>
+    <string name="add_line1">House no/ Apartment no</string>
+    <string name="add_line2">Street/ Area/ Colony</string>
     <string name="city">City</string>
     <string name="state">State</string>
     <string name="pincode">Pincode</string>
+    <string name="country">Country</string>
     <string name="product_key">Product key</string>
     <string name="go_to_login"><u>Already have an account? Sign up instead.</u></string>
     <string name="go_to_signup">Dont have an account? Create one!</string>
@@ -22,4 +25,6 @@
     <string name="add_central_module_text">Add new Smartdom</string>
     <string name="edit_smartdom_name">Edit Smartdom name</string>
     <string name="create_new_room">Create new room</string>
+    <string name="next">next</string>
+    <string name="prev">prev</string>
 </resources>

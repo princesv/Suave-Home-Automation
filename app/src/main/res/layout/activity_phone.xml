@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignUpModule.PhoneActivity"
+    android:background="@color/colorPrimary">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/teleCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:alpha="0.5"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.047"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499">
+
+        <com.hbb20.CountryCodePicker
+            android:layout_width="56dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:id="@+id/ccp"
+            android:textSize="32sp" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.5"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/teleCode"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498">
+
+        <EditText
+            android:id="@+id/userPhoneNumber"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="Mobile No"
+            android:inputType="phone"
+            android:padding="2dp"
+            android:textSize="32sp" />
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:onClick="openOTPVerificationActivity"
+        android:text="send otp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -139,7 +140,7 @@ public class SwitchBoardsFragment extends Fragment {
 
                    */
                     if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey,rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList);
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
                         expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList);
