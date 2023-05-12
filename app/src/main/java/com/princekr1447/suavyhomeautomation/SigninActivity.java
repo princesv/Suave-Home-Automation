@@ -20,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -30,6 +31,7 @@ public class SigninActivity extends AppCompatActivity {
 
     EditText sign_in_username;
     EditText signin_password;
+    TextView resetPasswordTextView;
     Button signin_button;
     private FirebaseAuth mAuth;
     public static final String SIGNEDIN="signedIn";
@@ -48,11 +50,19 @@ public class SigninActivity extends AppCompatActivity {
         sign_in_username=findViewById(R.id.signin_username);
         signin_password=findViewById(R.id.signin_password);
         signin_button=findViewById(R.id.signin_button);
+        resetPasswordTextView=findViewById(R.id.resetPasswordTv);
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         mAuth=FirebaseAuth.getInstance();
         gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc= GoogleSignIn.getClient(this,gso);
+        resetPasswordTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SigninActivity.this,PasswordResetActivity.class);
+                startActivity(intent);
 
+            }
+        });
         signin_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

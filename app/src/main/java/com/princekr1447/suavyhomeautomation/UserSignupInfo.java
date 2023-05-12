@@ -5,24 +5,38 @@ import java.util.ArrayList;
 public class UserSignupInfo {
     String pincode;
     ArrayList<String> productKey;
-    String Address;
+    String addressL1;
+    String addressL2;
     String city;
     String state;
+    String country;
+    String phoneNumber;
 
-    public UserSignupInfo(String pincode, ArrayList<String> productKey, String address, String city, String state) {
+    public UserSignupInfo(String addressL1,String addressL2, String city, String state,String pincode,String country,String phoneNumber, ArrayList<String> productKey) {
         this.pincode = pincode;
         this.productKey = productKey;
-        Address = address;
+        this.addressL1= addressL1;
+        this.addressL2=addressL2;
         this.city = city;
         this.state = state;
+        this.country=country;
+        this.phoneNumber=phoneNumber;
     }
 
-    public String getAddress() {
-        return Address;
+    public String getAddressL1() {
+        return addressL1;
     }
 
-    public void setAddress(String address) {
-        Address = address;
+    public void setAddressL1(String addressL1) {
+        addressL1 = addressL1;
+    }
+
+    public String getAddressL2() {
+        return addressL2;
+    }
+
+    public void setAddressL2(String addressL2) {
+        addressL2 = addressL2;
     }
 
     public String getCity() {
@@ -55,5 +69,21 @@ public class UserSignupInfo {
 
     public void setProductKey(ArrayList<String> productKey) {
         this.productKey = productKey;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

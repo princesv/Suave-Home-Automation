@@ -2,15 +2,20 @@ package com.princekr1447.suavyhomeautomation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.service.autofill.UserData;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +27,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,11 +59,6 @@ public class SignupActivity extends AppCompatActivity {
     Button button_signup;
     EditText editTextEmail;
     EditText editTextPassword;
-    EditText editTextPincode;
-    EditText editTextAddressLine1;
-    EditText editTextCity;
-    EditText editTextCountry;
-    TextView goToSignIn;
     ArrayList<String> productKeys;
     private FirebaseAuth mAuth;
     DatabaseReference databaseReferenceUsersId;
@@ -69,10 +71,13 @@ public class SignupActivity extends AppCompatActivity {
     public static final String SIGNEDIN="signedIn";
     public static final String USERID="userId";
     String addressl1;
+    String addressl2;
     String pincode;
     String city;
     String country;
     String state;
+    String phoneNumber;
+    CardView signupWithGoogle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,23 +85,30 @@ public class SignupActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         Intent intent=getIntent();
-        addressl1=intent.getStringExtra(SignupDetailsActivity.ADDRESS);
+        addressl1=intent.getStringExtra(SignupDetailsActivity.ADDRESS_LINE_1);
+        addressl2=intent.getStringExtra(SignupDetailsActivity.ADDRESS_LINE_2);
         pincode=intent.getStringExtra(SignupDetailsActivity.PINCODE);
         city=intent.getStringExtra(SignupDetailsActivity.CITY);
         country=intent.getStringExtra(SignupDetailsActivity.COUNTRY);
         state=intent.getStringExtra(SignupDetailsActivity.STATE);
+        phoneNumber=intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         productKeys=new ArrayList<>();
         button_signup=findViewById(R.id.buttonAccount);
-        editTextPincode=findViewById(R.id.editPincode);
-        editTextAddressLine1=findViewById(R.id.editAddressLine1);
-        editTextCity=findViewById(R.id.editCity);
-        editTextCountry=findViewById(R.id.textState);
+        editTextEmail=findViewById(R.id.emailSignup);
+        editTextPassword=findViewById(R.id.passwordSignup);
+        signupWithGoogle=findViewById(R.id.signUpWithGoogle);
         mAuth = FirebaseAuth.getInstance();
         databaseReferenceUsersId=FirebaseDatabase.getInstance().getReference(usersId_key);
         databaseReferenceProductKey=FirebaseDatabase.getInstance().getReference(productKey_key);
         gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc= GoogleSignIn.getClient(this,gso);
-
+        signupWithGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=gsc.getSignInIntent();
+                startActivityForResult(intent,100);
+            }
+        });
         button_signup.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -134,10 +146,6 @@ public class SignupActivity extends AppCompatActivity {
             databaseReferenceProductKey.child(productKey).child("SwitchBoards").child(""+i).setValue(switchBoard);
         }
     }*/
-   public void signUpWithGoogle(View view){
-       Intent intent=gsc.getSignInIntent();
-       startActivityForResult(intent,100);
-   }
    void signupWithEmailAndPassword(String email,String password){
        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
            @Override
@@ -145,12 +153,47 @@ public class SignupActivity extends AppCompatActivity {
                if(task.isSuccessful()){
                    Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                    FirebaseUser user=mAuth.getCurrentUser();
-                   String editedEmailForCall= user.getUid();
-                   UserSignupInfo userSignupInfo=new UserSignupInfo(pincode,productKeys,addressl1,city,state);
-                   databaseReferenceUsersId.child(editedEmailForCall).setValue(userSignupInfo);
-                   Intent intent=new Intent(SignupActivity.this,Main2Activity.class);
-                   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                   startActivity(intent);
+                   user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           final Dialog dialog=new Dialog(SignupActivity.this);
+                           dialog.setCanceledOnTouchOutside(false);
+                           dialog.setContentView(R.layout.signup_dialog_layout);
+                           Button dialogButton=dialog.findViewById(R.id.dialog_btn_nav_to_signin);
+                           dialogButton.setOnClickListener(new View.OnClickListener() {
+                               @Override
+                               public void onClick(View v) {
+                                   Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
+                                   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                   startActivity(intent);
+                                   dialog.hide();
+                               }
+                           });
+                           dialog.show();
+
+                          /* AlertDialog.Builder builder=new AlertDialog.Builder(SignupActivity.this);
+                           builder.setTitle("Account created successfully");
+                           builder.setMessage(R.string.signup_dialog_text);
+                           builder.setCancelable(false);
+                           builder.setNeutralButton("Got it!", new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                                   Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
+                                   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                   startActivity(intent);
+                               }
+                           });
+                           AlertDialog alertDialog=builder.create();
+                           alertDialog.show();
+                           */
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
+                       @Override
+                       public void onFailure(@NonNull Exception e) {
+                           Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                       }
+                   });
+                   mAuth.signOut();
                }
                else{
                    if(task.getException() instanceof FirebaseAuthUserCollisionException){

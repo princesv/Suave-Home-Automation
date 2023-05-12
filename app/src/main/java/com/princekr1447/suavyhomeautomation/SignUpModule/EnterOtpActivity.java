@@ -230,4 +230,7 @@ public class EnterOtpActivity extends AppCompatActivity {
             });
         }
     }
+    private void resendOtp(View view){
+        sendOtp();
+    }
 }

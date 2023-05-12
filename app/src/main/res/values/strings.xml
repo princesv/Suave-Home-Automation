@@ -3,7 +3,7 @@
     <string name="app_name">Suavy Home Automation</string>
     <string name="email_hint_text">Email</string>
     <string name="password_hint_text">Password</string>
-    <string name="signin_text">Login to existing account</string>
+    <string name="signin_text">Login</string>
     <string name="signup_text">Create new account</string>
     <string name="address_details">Fill address details</string>
     <string name="logout_text">Log out</string>
@@ -27,4 +27,10 @@
     <string name="create_new_room">Create new room</string>
     <string name="next">next</string>
     <string name="prev">prev</string>
+    <string name="otp_not_received">Not received your code?</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="nav_to_signin">navigate to signin page</string>
+    <string name="reset_password">Reset password</string>
+    <string name="reset_btn">Send password reset email</string>
+    <string name="signup_dialog_text">Please verify your email through the verification link shared with you on email and login using the same credentials.</string>
 </resources>

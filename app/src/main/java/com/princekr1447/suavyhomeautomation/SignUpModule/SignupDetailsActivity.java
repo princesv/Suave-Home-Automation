@@ -18,11 +18,13 @@ public class SignupDetailsActivity extends AppCompatActivity {
     EditText editTextCity;
     EditText editTextCountry;
     EditText editTextState;
+    EditText getEditTextAddressLine2;
     Button btnNext;
     final public static String CITY="city";
     final public static String COUNTRY="country";
     final public static String PINCODE="pincode";
-    final public static String ADDRESS="address";
+    final public static String ADDRESS_LINE_1="address line 1";
+    final public static String ADDRESS_LINE_2="address line 2";
     final public static String STATE="state";
 
     @Override
@@ -32,18 +34,27 @@ public class SignupDetailsActivity extends AppCompatActivity {
         editTextPincode=findViewById(R.id.editPincode);
         editTextAddressLine1=findViewById(R.id.editAddressLine1);
         editTextCity=findViewById(R.id.editCity);
-        editTextCountry=findViewById(R.id.textState);
+        editTextCountry=findViewById(R.id.editCountry);
         btnNext=findViewById(R.id.buttonGoToSignupPage);
         editTextState=findViewById(R.id.textState);
+        getEditTextAddressLine2=findViewById(R.id.editAddressLine2);
+        Intent parentIntent=getIntent();
+        final String phoneNumber=parentIntent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String addl1=editTextAddressLine1.getText().toString().trim();
+                String addl2=getEditTextAddressLine2.getText().toString().trim();
                 String pincode=editTextPincode.getText().toString().trim();
                 String city=editTextCity.getText().toString().trim();
                 String country=editTextCountry.getText().toString().trim();
                 String state=editTextState.getText().toString().trim();
                 if(addl1.isEmpty()){
+                    editTextAddressLine1.setError("Required field");
+                    editTextAddressLine1.requestFocus();
+                    return;
+                }
+                if(addl2.isEmpty()){
                     editTextAddressLine1.setError("Required field");
                     editTextAddressLine1.requestFocus();
                     return;
@@ -71,9 +82,11 @@ public class SignupDetailsActivity extends AppCompatActivity {
                 Intent intent=new Intent(SignupDetailsActivity.this, SignupActivity.class);
                 intent.putExtra(CITY,city);
                 intent.putExtra(COUNTRY,country);
-                intent.putExtra(ADDRESS,addl1);
+                intent.putExtra(ADDRESS_LINE_1,addl1);
+                intent.putExtra(ADDRESS_LINE_2,addl2);
                 intent.putExtra(PINCODE,pincode);
                 intent.putExtra(STATE,state);
+                intent.putExtra(Intent.EXTRA_PHONE_NUMBER,phoneNumber);
                 startActivity(intent);
             }
         });
