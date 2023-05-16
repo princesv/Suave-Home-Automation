@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -27,6 +28,7 @@ import okhttp3.Response;
 public class PhoneActivity extends AppCompatActivity {
     EditText phoneNumber;
     CountryCodePicker ccp;
+    TextView textStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class PhoneActivity extends AppCompatActivity {
         phoneNumber=findViewById(R.id.userPhoneNumber);
         ccp=findViewById(R.id.ccp);
         ccp.registerCarrierNumberEditText(phoneNumber);
+        textStep=findViewById(R.id.stepNumberTextView);
+        textStep.setText(R.string.step1);
 
     }
    /* public static String httpRequestToSendOTP(String phoneno) {

@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorPrimaryDark"
+    android:padding="16dp">
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="32dp"
+            android:text="@string/update_switch_board"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:background="@color/colorAccent"
+            />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:text="Title:"/>
     <EditText
         android:layout_width="match_parent"
@@ -16,7 +33,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="switch 1:"/>
+        android:textSize="16dp"
+        android:text="switch 1:"
+        android:id="@+id/dialogS1Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +43,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch 2:"/>
+        android:textSize="16dp"
+        android:text="Switch 2:"
+        android:id="@+id/dialogS2Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +53,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch 3:"/>
+        android:textSize="16dp"
+        android:text="Switch 3:"
+        android:id="@+id/dialogS3Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +63,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch 4:"/>
+        android:textSize="16dp"
+        android:text="Switch 4:"
+        android:id="@+id/dialogS4Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +73,9 @@
     <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Switch 5:"/>
+        android:textSize="16dp"
+    android:text="Switch 5:"
+        android:id="@+id/dialogS5Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,7 +83,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch 6:"/>
+        android:textSize="16dp"
+        android:text="Switch 6:"
+        android:id="@+id/dialogS6Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,7 +93,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch 7:"/>
+        android:textSize="16dp"
+        android:text="Switch 7:"
+        android:id="@+id/dialogS7Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,7 +103,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch 8:"/>
+        android:textSize="16dp"
+        android:text="Switch 8:"
+        android:id="@+id/dialogS8Tv"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,13 +115,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown"/>
+            android:background="@color/colorAccent"
+            android:popupBackground="@color/colorAccent"
+            android:spinnerMode="dropdown"
+            android:layout_margin="8dp"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="update"
+        android:background="@color/colorAccent"
         android:id="@+id/dialogButton"/>
     </LinearLayout>
 </ScrollView>

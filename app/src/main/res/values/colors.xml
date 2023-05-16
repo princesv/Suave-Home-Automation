@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#18242b</color>
-    <color name="colorPrimaryLight">#000000</color>
+    <color name="colorPrimaryLight">#84c9fb</color>
     <color name="colorPrimaryDark">#121212</color>
-    <color name="colorAccent">#84c9fb</color>
+    <color name="colorAccent">#9575CD</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="shimmer_grey">#dddddd</color>
     <color name="shimmer_grey_dark">#b3b3b3</color>

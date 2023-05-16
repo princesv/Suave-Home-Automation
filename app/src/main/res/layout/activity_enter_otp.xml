@@ -5,7 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SignUpModule.EnterOtpActivity"
-    android:background="@color/colorPrimary">
+    android:background="@drawable/gradient_background_drawable">
+    <ProgressBar
+        android:id="@+id/loadingPB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.05"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/createNewAccountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="48sp"
+        android:text="@string/signup_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        android:padding="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/stepNumberTextView"
+        app:layout_constraintTop_toBottomOf="@id/createNewAccountTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.1"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -16,8 +48,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.309">
+        app:layout_constraintTop_toBottomOf="@id/stepNumberTextView"
+        app:layout_constraintVertical_bias="0.2">
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +69,8 @@
             android:layout_height="wrap_content"
             android:textSize="32dp"
             android:inputType="number"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:textColor="@color/colorPrimaryDark"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -58,7 +91,8 @@
             android:textSize="32dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:textColor="@color/colorPrimaryDark"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -80,7 +114,8 @@
             android:textSize="32dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:textColor="@color/colorPrimaryDark"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -101,7 +136,8 @@
             android:textSize="32dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:textColor="@color/colorPrimaryDark"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -122,7 +158,8 @@
             android:textSize="32dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:textColor="@color/colorPrimaryDark"/>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:id="@+id/teleCode"
@@ -144,7 +181,8 @@
             android:textSize="32dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:textColor="@color/colorPrimaryDark"/>
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>
@@ -155,7 +193,6 @@
         android:layout_height="wrap_content"
         android:text="verify"
         android:background="@color/colorPrimaryDark"
-        android:onClick="verifyOTP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

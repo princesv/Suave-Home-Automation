@@ -5,10 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SignupOrSigninActivity"
-    android:background="@color/colorPrimary">
+    android:background="@drawable/blach_and_white">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/smartdomTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Smartdome"
+        android:textSize="48sp"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonSignin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:transitionName="@string/smartdom_transition"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintTop_toBottomOf="@id/smartdomTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonSignin"
+        app:layout_constraintVertical_bias="0.1"/>
 
     <Button
         android:id="@+id/buttonSignin"
@@ -21,7 +43,7 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.400"
+        app:layout_constraintVertical_bias="0.500"
         android:onClick="goToSigninPage"/>
 
     <LinearLayout
@@ -36,8 +58,8 @@
 
         <View
             android:layout_width="128dp"
-            android:layout_height="2dp"
-            android:background="@color/colorPrimaryDark" />
+            android:layout_height="0.2dp"
+            android:background="@color/colorWhite" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -48,8 +70,8 @@
 
         <View
             android:layout_width="128dp"
-            android:layout_height="2dp"
-            android:background="@color/colorPrimaryDark" />
+            android:layout_height="0.2dp"
+            android:background="@color/colorWhite" />
     </LinearLayout>
 
     <Button
@@ -66,32 +88,6 @@
         app:layout_constraintVertical_bias="0.374"
         android:onClick="goToSignupPage"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="top"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
-
-
-        <View
-            android:id="@+id/header_view"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:background="@drawable/header_bg" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-    <LinearLayout
-        android:gravity="bottom"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <View
-
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:background="@drawable/bottom_bg"/>
-    </LinearLayout>
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,7 @@ public class SigninActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     public static final String SHARED_PREF="sharedPrefs";
     SharedPreferences.Editor editor;
-
+    ProgressBar loadingPB;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
     @Override
@@ -51,6 +52,7 @@ public class SigninActivity extends AppCompatActivity {
         signin_password=findViewById(R.id.signin_password);
         signin_button=findViewById(R.id.signin_button);
         resetPasswordTextView=findViewById(R.id.resetPasswordTv);
+        loadingPB=findViewById(R.id.loadingPB);
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         mAuth=FirebaseAuth.getInstance();
         gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -90,8 +92,7 @@ public class SigninActivity extends AppCompatActivity {
                     signin_password.requestFocus();
                     return;
                 }
-
-
+                progressVisible();
                 mAuth.signInWithEmailAndPassword(emailSignin,passwordSignin).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -100,6 +101,7 @@ public class SigninActivity extends AppCompatActivity {
                         }else{
                             Toast.makeText(SigninActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                        progressInvisible();
                     }
                 });
             }
@@ -118,6 +120,7 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        progressVisible();
         if(requestCode==100){
             Task<GoogleSignInAccount> task=GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -138,13 +141,21 @@ public class SigninActivity extends AppCompatActivity {
                 Toast.makeText(this, "Unable to sign in. Please try again.", Toast.LENGTH_SHORT).show();
             }
         }
+        progressInvisible();
     }
 
     private void HomeActivity() {
         //String emailEdited=emailSignin.replace(".","DOTT");
-        finish();
         Intent intent=new Intent(SigninActivity.this,Main2Activity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+    void progressVisible(){
+        loadingPB.setVisibility(View.VISIBLE);
+        signin_button.setVisibility(View.INVISIBLE);
+    }
+    void progressInvisible(){
+        loadingPB.setVisibility(View.INVISIBLE);
+        signin_button.setVisibility(View.VISIBLE);
     }
 }

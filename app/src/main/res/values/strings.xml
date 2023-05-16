@@ -32,5 +32,12 @@
     <string name="nav_to_signin">navigate to signin page</string>
     <string name="reset_password">Reset password</string>
     <string name="reset_btn">Send password reset email</string>
+    <string name="central_module_update_dialog_text">"Enter name of the central module"</string>
+    <string name="update_switch_board">Update switch board and switch names</string>
+    <string name="smartdom_transition">Smartdom transition</string>
+    <string name="step1">Step 1 of 4: Verify your phone number</string>
+    <string name="step2">Step 2 of 4: Enter OTP received on your phone</string>
+    <string name="step3">Step 3 of 4: Enter personal information</string>
+    <string name="step4">Step 4 of 4: Create new credentials</string>
     <string name="signup_dialog_text">Please verify your email through the verification link shared with you on email and login using the same credentials.</string>
 </resources>

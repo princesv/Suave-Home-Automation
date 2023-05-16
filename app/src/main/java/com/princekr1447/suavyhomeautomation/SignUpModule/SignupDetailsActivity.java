@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.princekr1447.suavyhomeautomation.R;
 import com.princekr1447.suavyhomeautomation.SignupActivity;
@@ -20,6 +21,7 @@ public class SignupDetailsActivity extends AppCompatActivity {
     EditText editTextState;
     EditText getEditTextAddressLine2;
     Button btnNext;
+    TextView textStep;
     final public static String CITY="city";
     final public static String COUNTRY="country";
     final public static String PINCODE="pincode";
@@ -38,6 +40,8 @@ public class SignupDetailsActivity extends AppCompatActivity {
         btnNext=findViewById(R.id.buttonGoToSignupPage);
         editTextState=findViewById(R.id.textState);
         getEditTextAddressLine2=findViewById(R.id.editAddressLine2);
+        textStep=findViewById(R.id.stepNumberTextView);
+        textStep.setText(R.string.step3);
         Intent parentIntent=getIntent();
         final String phoneNumber=parentIntent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         btnNext.setOnClickListener(new View.OnClickListener() {

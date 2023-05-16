@@ -6,7 +6,7 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="10dp"
     android:layout_margin="8dp"
-    android:alpha="0.5">
+    android:alpha="0.8">
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,19 +24,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.106"
-        android:hint="@string/email_hint_text"/>
+        android:hint="@string/email_hint_text"
+        android:textColor="@color/colorPrimaryDark"/>
 
     <EditText
         android:id="@+id/passwordSignup"
         android:layout_width="256dp"
         android:layout_height="wrap_content"
+        android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailSignup"
         app:layout_constraintVertical_bias="0.113"
-        android:hint="@string/password_hint_text"/>
+        android:hint="@string/password_hint_text"
+        android:textColor="@color/colorPrimaryDark"/>
 
     <Button
         android:id="@+id/buttonAccount"
@@ -58,9 +61,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/credentials"
-        android:textColor="#303F9F"
+        android:textColor="@color/colorAccent"
         android:textSize="25sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"

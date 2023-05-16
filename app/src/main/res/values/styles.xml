@@ -7,8 +7,14 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">sans-serif-thin</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="editTextStyle">@style/CustomEditText</item>
         <item name="android:itemBackground">@color/colorPrimary</item>
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
+    <style name="CustomEditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/colorWhite</item>
     </style>
 
 </resources>

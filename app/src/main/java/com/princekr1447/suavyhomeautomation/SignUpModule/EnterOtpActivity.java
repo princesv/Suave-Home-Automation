@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.credentials.Credential;
@@ -33,6 +36,9 @@ public class EnterOtpActivity extends AppCompatActivity {
     EditText et6;
     String phoneNumber;
     String otpId;
+    ProgressBar loadingPB;
+    TextView textStep;
+    Button verifyOtp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +50,54 @@ public class EnterOtpActivity extends AppCompatActivity {
         et4=findViewById(R.id.et4);
         et5=findViewById(R.id.et5);
         et6=findViewById(R.id.et6);
+        textStep=findViewById(R.id.stepNumberTextView);
+        textStep.setText(R.string.step2);
+        loadingPB=findViewById(R.id.loadingPB);
+        verifyOtp=findViewById(R.id.button_verify_otp);
         setupOtpInputs();
         phoneNumber=getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         sendOtp();
+        verifyOtp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(et1.toString().trim().isEmpty()||et2.toString().trim().isEmpty()||et3.toString().trim().isEmpty()||et4.toString().trim().isEmpty()){
+                    Toast.makeText(EnterOtpActivity.this, "Enter valid otp", Toast.LENGTH_SHORT).show();
+                }else{
+                    String otp=et1.getText().toString().trim();
+                    otp+=et2.getText().toString().trim();
+                    otp+=et3.getText().toString().trim();
+                    otp+=et4.getText().toString().trim();
+                    otp+=et5.getText().toString().trim();
+                    otp+=et6.getText().toString().trim();
+
+            /*otp.concat(et2.getText().toString().trim());
+            otp.concat(et3.getText().toString().trim());
+            otp.concat(et4.getText().toString().trim());
+            otp.concat(et5.getText().toString().trim());
+            otp.concat(et6.getText().toString().trim());
+
+             */
+                    loadingPB.setVisibility(View.VISIBLE);
+                    PhoneAuthCredential credential=PhoneAuthProvider.getCredential(otpId,otp);
+                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful()){
+                                FirebaseAuth.getInstance().signOut();
+                                Toast.makeText(EnterOtpActivity.this, "Phone verification successful", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(EnterOtpActivity.this, SignupDetailsActivity.class);
+                                intent.putExtra(Intent.EXTRA_PHONE_NUMBER,phoneNumber);
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                Toast.makeText(EnterOtpActivity.this, "Incorrect OTP entered", Toast.LENGTH_SHORT).show();
+                            }
+                            loadingPB.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        });
     }
     private void sendOtp(){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
@@ -193,42 +244,6 @@ public class EnterOtpActivity extends AppCompatActivity {
 
             }
         });
-    }
-    public void verifyOTP(View view){
-        if(et1.toString().trim().isEmpty()||et2.toString().trim().isEmpty()||et3.toString().trim().isEmpty()||et4.toString().trim().isEmpty()){
-            Toast.makeText(this, "Enter valid OTP!", Toast.LENGTH_SHORT).show();
-        }else{
-            String otp=et1.getText().toString().trim();
-            otp+=et2.getText().toString().trim();
-            otp+=et3.getText().toString().trim();
-            otp+=et4.getText().toString().trim();
-            otp+=et5.getText().toString().trim();
-            otp+=et6.getText().toString().trim();
-
-            /*otp.concat(et2.getText().toString().trim());
-            otp.concat(et3.getText().toString().trim());
-            otp.concat(et4.getText().toString().trim());
-            otp.concat(et5.getText().toString().trim());
-            otp.concat(et6.getText().toString().trim());
-
-             */
-            PhoneAuthCredential credential=PhoneAuthProvider.getCredential(otpId,otp);
-            FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()){
-                        FirebaseAuth.getInstance().signOut();
-                        Toast.makeText(EnterOtpActivity.this, "Phone verification successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(EnterOtpActivity.this, SignupDetailsActivity.class);
-                        intent.putExtra(Intent.EXTRA_PHONE_NUMBER,phoneNumber);
-                        startActivity(intent);
-                        finish();
-                    }else{
-                        Toast.makeText(EnterOtpActivity.this, "Incorrect OTP entered", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
     }
     private void resendOtp(View view){
         sendOtp();

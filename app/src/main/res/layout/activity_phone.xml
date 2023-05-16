@@ -5,14 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SignUpModule.PhoneActivity"
-    android:background="@color/colorPrimary">
+    android:background="@drawable/gradient_background_drawable">
+    <TextView
+        android:id="@+id/createNewAccountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="48sp"
+        android:text="@string/signup_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        android:padding="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/stepNumberTextView"
+        app:layout_constraintTop_toBottomOf="@id/createNewAccountTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.1"/>
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/teleCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:alpha="0.5"
+        android:alpha="0.8"
         app:cardCornerRadius="8dp"
         app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:layout_marginEnd="16dp"
-        android:alpha="0.5"
+        android:alpha="0.8"
         app:cardCornerRadius="8dp"
         app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,7 +76,8 @@
             android:hint="Mobile No"
             android:inputType="phone"
             android:padding="2dp"
-            android:textSize="32sp" />
+            android:textSize="32sp"
+            android:textColor="@color/colorPrimaryDark"/>
     </androidx.cardview.widget.CardView>
 
     <Button

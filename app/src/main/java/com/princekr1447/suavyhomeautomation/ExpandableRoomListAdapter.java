@@ -10,12 +10,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -558,7 +561,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         ets6.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name6);
         ets7.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name7);
         ets8.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name8);
-        dialogBuilder.setTitle("Update "+switchBoardTitle);
+        dropdown.setSelection(groupPosition);
         final AlertDialog alertDialog=dialogBuilder.create();
         alertDialog.show();
         updateButton.setOnClickListener(new View.OnClickListener() {

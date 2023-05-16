@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +79,9 @@ public class SignupActivity extends AppCompatActivity {
     String state;
     String phoneNumber;
     CardView signupWithGoogle;
+    TextView textStep;
+
+    ProgressBar loadingPB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +101,9 @@ public class SignupActivity extends AppCompatActivity {
         editTextEmail=findViewById(R.id.emailSignup);
         editTextPassword=findViewById(R.id.passwordSignup);
         signupWithGoogle=findViewById(R.id.signUpWithGoogle);
+        loadingPB=findViewById(R.id.loadingPB);
+        textStep=findViewById(R.id.stepNumberTextView);
+        textStep.setText(R.string.step4);
         mAuth = FirebaseAuth.getInstance();
         databaseReferenceUsersId=FirebaseDatabase.getInstance().getReference(usersId_key);
         databaseReferenceProductKey=FirebaseDatabase.getInstance().getReference(productKey_key);
@@ -147,6 +154,7 @@ public class SignupActivity extends AppCompatActivity {
         }
     }*/
    void signupWithEmailAndPassword(String email,String password){
+       progressVisible();
        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
            @Override
            public void onComplete(@NonNull Task<AuthResult> task) {
@@ -164,7 +172,7 @@ public class SignupActivity extends AppCompatActivity {
                                @Override
                                public void onClick(View v) {
                                    Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
-                                   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                   intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                    startActivity(intent);
                                    dialog.hide();
                                }
@@ -203,6 +211,7 @@ public class SignupActivity extends AppCompatActivity {
                    }
                    gsc.signOut();
                }
+               progressInvisible();
            }
        });
    }
@@ -220,5 +229,13 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(this, "Unable to sign in. Please try again.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    void progressVisible(){
+       loadingPB.setVisibility(View.VISIBLE);
+       button_signup.setVisibility(View.INVISIBLE);
+    }
+    void progressInvisible(){
+        loadingPB.setVisibility(View.INVISIBLE);
+        button_signup.setVisibility(View.VISIBLE);
     }
 }
