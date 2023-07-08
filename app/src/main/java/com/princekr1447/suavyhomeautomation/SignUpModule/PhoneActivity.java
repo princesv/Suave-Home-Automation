@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -120,6 +121,7 @@ public class PhoneActivity extends AppCompatActivity {
        taskVerifyPhone.execute(phoneno);*/
        Intent intent = new Intent(PhoneActivity.this,EnterOtpActivity.class);
        intent.putExtra(Intent.EXTRA_PHONE_NUMBER,ccp.getFullNumberWithPlus().replace(" ",""));
+       intent.putExtra(EnterOtpActivity.LOGIN_FLAG,getIntent().getBooleanExtra(EnterOtpActivity.LOGIN_FLAG,false));
        startActivity(intent);
    }
 }

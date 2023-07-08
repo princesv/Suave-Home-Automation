@@ -26,7 +26,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.princekr1447.suavyhomeautomation.SignUpModule.EnterOtpActivity;
+import com.princekr1447.suavyhomeautomation.SignUpModule.PhoneActivity;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -55,7 +58,10 @@ public class SigninActivity extends AppCompatActivity {
         loadingPB=findViewById(R.id.loadingPB);
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         mAuth=FirebaseAuth.getInstance();
-        gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         gsc= GoogleSignIn.getClient(this,gso);
         resetPasswordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +103,12 @@ public class SigninActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            HomeActivity();
+                            if(isUserVerified()){
+                                HomeActivity();
+                            }else{
+                                Toast.makeText(SigninActivity.this, "Please verify your email id before trying to log in.", Toast.LENGTH_SHORT).show();
+                                mAuth.signOut();
+                            }
                         }else{
                             Toast.makeText(SigninActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -112,9 +123,28 @@ public class SigninActivity extends AppCompatActivity {
 
     }
 
+    public boolean isUserVerified(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user.isEmailVerified())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void logInWithGoogle(View view) {
         Intent intent=gsc.getSignInIntent();
         startActivityForResult(intent,100);
+    }
+
+    public void logInWithPhone(View view) {
+        Intent intent=new Intent(SigninActivity.this, PhoneActivity.class);
+        intent.putExtra(EnterOtpActivity.LOGIN_FLAG,true);
+        startActivity(intent);
     }
 
     @Override
@@ -125,7 +155,7 @@ public class SigninActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task=GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account= task.getResult(ApiException.class);
-                mAuth.signInWithEmailAndPassword(account.getEmail(),account.getId()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+              /*  mAuth.signInWithEmailAndPassword(account.getEmail(),account.getId()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
@@ -136,9 +166,12 @@ public class SigninActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+               */
+              firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Unable to sign in. Please try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
         progressInvisible();
@@ -157,5 +190,26 @@ public class SigninActivity extends AppCompatActivity {
     void progressInvisible(){
         loadingPB.setVisibility(View.INVISIBLE);
         signin_button.setVisibility(View.VISIBLE);
+    }
+    void firebaseAuthWithGoogle(String idToken){
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                if(isNew){
+                    Toast.makeText(SigninActivity.this, "No existing user with the given account found. Try signing up instead.", Toast.LENGTH_SHORT).show();
+                    mAuth.getCurrentUser().delete();
+                    gsc.signOut();
+                    return;
+                }
+                if(task.isSuccessful()){
+                    HomeActivity();
+                }else{
+                    Toast.makeText(SigninActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                progressInvisible();
+            }
+        });
     }
 }

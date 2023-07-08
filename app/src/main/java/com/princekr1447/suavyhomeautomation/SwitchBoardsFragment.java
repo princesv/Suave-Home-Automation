@@ -65,6 +65,7 @@ public class SwitchBoardsFragment extends Fragment {
     FloatingActionButton mainFab;
     boolean fabClicked;
     TextView tv1,tv2;
+    int[] arrows=new int[50];
     public SwitchBoardsFragment(String productKey,CentralModule centralModule,String emailEncoded,Activity context) {
         this.productKey = productKey;
         this.emailEncoded=emailEncoded;
@@ -140,10 +141,10 @@ public class SwitchBoardsFragment extends Fragment {
 
                    */
                     if(expandableRoomListAdapter==null) {
-                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                        expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList,arrows);
                         expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                     }else{
-                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList);
+                        expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey,liveIndicesArrayList,arrows);
                     }
 
 
@@ -323,13 +324,13 @@ public class SwitchBoardsFragment extends Fragment {
         protected void onPostExecute(String s) {
             if(s.equals("0")) {
                 if (expandableRoomListAdapter == null) {
-                    expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                    expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList,arrows);
                     expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
                 } else {
-                    expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                    expandableRoomListAdapter.dataSetChanged(rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList,arrows);
                 }
             }else{
-                expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList);
+                expandableRoomListAdapter = new ExpandableRoomListAdapter(productKey, rooms, context, keyPos, switchBoardList, refKeyPos, refProductKey, liveIndicesArrayList,arrows);
                 expandableListViewSwitcheBoards.setAdapter(expandableRoomListAdapter);
             }
         }

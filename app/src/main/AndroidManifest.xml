@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/suavy_technologies_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PasswordResetActivity"></activity>
+        <activity android:name=".ProfileActivity"/>
+        <activity android:name=".PasswordResetActivity" />
         <activity android:name=".SignUpModule.SignupDetailsActivity" />
         <activity android:name=".SignUpModule.EnterOtpActivity" />
         <activity android:name=".SignUpModule.PhoneActivity" />

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,8 +24,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.UserInfo;
+import com.princekr1447.suavyhomeautomation.Main2Activity;
 import com.princekr1447.suavyhomeautomation.R;
+import com.princekr1447.suavyhomeautomation.SignupActivity;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class EnterOtpActivity extends AppCompatActivity {
@@ -40,10 +45,15 @@ public class EnterOtpActivity extends AppCompatActivity {
     TextView textStep;
     Button verifyOtp;
 
+    public static final String LOGIN_FLAG="LOGIN_FLAG";
+    SharedPreferences sharedPreferences;
+    Boolean isLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_otp);
+        isLogin=getIntent().getBooleanExtra(LOGIN_FLAG,false);
         et1=findViewById(R.id.et1);
         et2=findViewById(R.id.et2);
         et3=findViewById(R.id.et3);
@@ -79,11 +89,44 @@ public class EnterOtpActivity extends AppCompatActivity {
              */
                     loadingPB.setVisibility(View.VISIBLE);
                     PhoneAuthCredential credential=PhoneAuthProvider.getCredential(otpId,otp);
+                    if(isLogin){
+                        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(task.isSuccessful()){
+                                    boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                                    if(isNew){
+                                        Toast.makeText(EnterOtpActivity.this, "Phone number not registered with any account.", Toast.LENGTH_SHORT).show();
+                                        FirebaseAuth.getInstance().getCurrentUser().delete();
+                                        finish();
+                                        return;
+                                    }
+                                    Toast.makeText(EnterOtpActivity.this, "Phone verification successful", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(EnterOtpActivity.this, Main2Activity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                }else{
+                                    Toast.makeText(EnterOtpActivity.this, "Incorrect OTP entered", Toast.LENGTH_SHORT).show();
+                                }
+                                loadingPB.setVisibility(View.GONE);
+                            }
+                        });
+                        return;
+                    }
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
+                            boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                            List<? extends UserInfo> info= task.getResult().getUser().getProviderData();
+                            int provCount=info.size();
+                            if(provCount>2){
+                                Toast.makeText(EnterOtpActivity.this, "Phone number already in use by an active user. Try another number or login instead.", Toast.LENGTH_SHORT).show();
                                 FirebaseAuth.getInstance().signOut();
+                                finish();
+                                return;
+                            }
+                            if(task.isSuccessful()){
                                 Toast.makeText(EnterOtpActivity.this, "Phone verification successful", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(EnterOtpActivity.this, SignupDetailsActivity.class);
                                 intent.putExtra(Intent.EXTRA_PHONE_NUMBER,phoneNumber);

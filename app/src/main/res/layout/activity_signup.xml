@@ -105,7 +105,9 @@
                 android:layout_margin="8dp" />
 
         </LinearLayout>
+
         </androidx.cardview.widget.CardView>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.princekr1447.suavyhomeautomation;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,7 +51,8 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     String productKey;
     DatabaseReference refKeyPos;
     DatabaseReference refProductKey;
-    public ExpandableRoomListAdapter(String productKey,ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey,ArrayList<ArrayList<IndexPojo>> indicesArrayList){
+    final int[] arrows;
+    public ExpandableRoomListAdapter(String productKey,ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey,ArrayList<ArrayList<IndexPojo>> indicesArrayList,int[] arrows){
         this.rooms=rooms;
         this.context=context;
         this.keyPos=keyPos;
@@ -58,11 +61,23 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         this.refProductKey=refProductKey;
         this.productKey=productKey;
         this.indicesArrayList=indicesArrayList;
+        this.arrows=arrows;
     }
 
     @Override
     public int getGroupCount() {
         return rooms.size();
+    }
+
+    @Override
+    public void onGroupExpanded(int groupPosition) {
+        super.onGroupExpanded(groupPosition);
+        arrows[groupPosition]=1;
+    }
+    @Override
+    public void onGroupCollapsed(int groupPosition) {
+        super.onGroupCollapsed(groupPosition);
+        arrows[groupPosition]=0;
     }
 
     @Override
@@ -102,10 +117,15 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(context).inflate(R.layout.room_card_view, parent, false);
         TextView roomTitle=convertView.findViewById(R.id.roomTitle);
+        final ImageView arrow=convertView.findViewById(R.id.arrow);
+        if(arrows[groupPosition]==1){
+            arrow.animate().rotation(180).setDuration(0).start();
+        }
         roomTitle.setText(rooms.get(groupPosition).getTitle());
         Button editButton=convertView.findViewById(R.id.editRoomButton);
+        final int[] rotationAngle={0};
         if(groupPosition==0){
-            editButton.setVisibility(View.GONE);
+            editButton.setVisibility(View.INVISIBLE);
             return convertView;
         }
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -604,7 +624,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void dataSetChanged(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey,ArrayList<ArrayList<IndexPojo>> indicesArrayList) {
+    public void dataSetChanged(ArrayList<RoomPojo> rooms, Activity context,String keyPos, ArrayList<SwitchBoard> switchBoardList,DatabaseReference refKeyPos,DatabaseReference refProductKey,ArrayList<ArrayList<IndexPojo>> indicesArrayList,int[] arrows) {
         super.notifyDataSetChanged();
         this.rooms=rooms;
         this.context=context;

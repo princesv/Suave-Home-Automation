@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.service.autofill.UserData;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
@@ -31,15 +32,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Tag;
 import com.princekr1447.suavyhomeautomation.SignUpModule.SignupDetailsActivity;
 
 import java.io.IOException;
@@ -107,7 +114,10 @@ public class SignupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         databaseReferenceUsersId=FirebaseDatabase.getInstance().getReference(usersId_key);
         databaseReferenceProductKey=FirebaseDatabase.getInstance().getReference(productKey_key);
-        gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         gsc= GoogleSignIn.getClient(this,gso);
         signupWithGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +153,20 @@ public class SignupActivity extends AppCompatActivity {
                     editTextPassword.requestFocus();
                     return;
                 }
-                signupWithEmailAndPassword(emailSignup,passwordSignup);
+                CheckEmailCollisionAndSignupWithEmailPasswordLogin(emailSignup, passwordSignup);
+            }
+        });
+    }
+    public void CheckEmailCollisionAndSignupWithEmailPasswordLogin(final String emailSignup,final String passwordSignup){
+        mAuth.fetchSignInMethodsForEmail(emailSignup).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+            @Override
+            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                if (task.getResult().getSignInMethods().contains(
+                                GoogleAuthProvider.PROVIDER_ID)){
+                    Toast.makeText(SignupActivity.this, "Email address already in use by Google authentication provider. Use another account.", Toast.LENGTH_SHORT).show();
+                }else{
+                    signupWithEmailAndPassword(emailSignup, passwordSignup);
+                }
             }
         });
     }
@@ -155,7 +178,7 @@ public class SignupActivity extends AppCompatActivity {
     }*/
    void signupWithEmailAndPassword(String email,String password){
        progressVisible();
-       mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+       /*mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
            @Override
            public void onComplete(@NonNull Task<AuthResult> task) {
                if(task.isSuccessful()){
@@ -164,36 +187,7 @@ public class SignupActivity extends AppCompatActivity {
                    user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                        @Override
                        public void onSuccess(Void aVoid) {
-                           final Dialog dialog=new Dialog(SignupActivity.this);
-                           dialog.setCanceledOnTouchOutside(false);
-                           dialog.setContentView(R.layout.signup_dialog_layout);
-                           Button dialogButton=dialog.findViewById(R.id.dialog_btn_nav_to_signin);
-                           dialogButton.setOnClickListener(new View.OnClickListener() {
-                               @Override
-                               public void onClick(View v) {
-                                   Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
-                                   intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                   startActivity(intent);
-                                   dialog.hide();
-                               }
-                           });
-                           dialog.show();
-
-                          /* AlertDialog.Builder builder=new AlertDialog.Builder(SignupActivity.this);
-                           builder.setTitle("Account created successfully");
-                           builder.setMessage(R.string.signup_dialog_text);
-                           builder.setCancelable(false);
-                           builder.setNeutralButton("Got it!", new DialogInterface.OnClickListener() {
-                               @Override
-                               public void onClick(DialogInterface dialog, int which) {
-                                   Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
-                                   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                   startActivity(intent);
-                               }
-                           });
-                           AlertDialog alertDialog=builder.create();
-                           alertDialog.show();
-                           */
+                           showDialogOnUserRegistered();
                        }
                    }).addOnFailureListener(new OnFailureListener() {
                        @Override
@@ -209,7 +203,38 @@ public class SignupActivity extends AppCompatActivity {
                    }else{
                        Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                    }
-                   gsc.signOut();
+               }
+               progressInvisible();
+           }
+       });
+
+        */
+       AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+       mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+           @Override
+           public void onComplete(@NonNull Task<AuthResult> task) {
+               if(task.isSuccessful()){
+                   Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                   FirebaseUser user=mAuth.getCurrentUser();
+                   user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           showDialogOnUserRegistered();
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
+                       @Override
+                       public void onFailure(@NonNull Exception e) {
+                           Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                       }
+                   });
+                   mAuth.signOut();
+               }
+               else{
+                   if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                       Toast.makeText(SignupActivity.this, "you are already registered", Toast.LENGTH_SHORT).show();
+                   }else{
+                       Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                   }
                }
                progressInvisible();
            }
@@ -221,12 +246,34 @@ public class SignupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==100){
             Task<GoogleSignInAccount> task= GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
+           /* try {
                 GoogleSignInAccount account= task.getResult(ApiException.class);
                 signupWithEmailAndPassword(account.getEmail(),account.getId());
             } catch (ApiException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Unable to sign in. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+
+            */
+            try {
+                final GoogleSignInAccount account= task.getResult(ApiException.class);
+                mAuth.fetchSignInMethodsForEmail(account.getEmail()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                        if (task.getResult().getSignInMethods().contains(
+                                EmailAuthProvider.PROVIDER_ID)||
+                                task.getResult().getSignInMethods().contains(
+                                        GoogleAuthProvider.PROVIDER_ID)){
+                            gsc.signOut();
+                            Toast.makeText(SignupActivity.this, "Email address already in use. Use another account.", Toast.LENGTH_SHORT).show();
+                        }else{
+                            signInWithGoogleCredentials(account.getIdToken());
+                        }
+                    }
+                });
+
+            } catch (ApiException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -237,5 +284,48 @@ public class SignupActivity extends AppCompatActivity {
     void progressInvisible(){
         loadingPB.setVisibility(View.INVISIBLE);
         button_signup.setVisibility(View.VISIBLE);
+    }
+    public void signInWithGoogleCredentials(String idToken){
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
+        FirebaseUser prevUser= mAuth.getCurrentUser();
+        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                if(!isNew){
+                    Toast.makeText(SignupActivity.this, "Credentials already belongs to an active user. Use different credentials or login instead.", Toast.LENGTH_SHORT).show();
+                    gsc.signOut();
+                    return;
+                }
+                if(task.isSuccessful()){
+                    homeActivity();
+                }else{
+                    Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                progressInvisible();
+            }
+        });
+    }
+    public void showDialogOnUserRegistered(){
+        final Dialog dialog=new Dialog(SignupActivity.this);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(R.layout.signup_dialog_layout);
+        Button dialogButton=dialog.findViewById(R.id.dialog_btn_nav_to_signin);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                dialog.hide();
+            }
+        });
+        dialog.show();
+    }
+    public void homeActivity() {
+        //String emailEdited=emailSignin.replace(".","DOTT");
+        Intent intent=new Intent(SignupActivity.this,Main2Activity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

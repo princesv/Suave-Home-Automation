@@ -34,13 +34,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.princekr1447.suavyhomeautomation.SignUpModule.EnterOtpActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +68,6 @@ public class Main2Activity extends AppCompatActivity {
     ViewPager viewPager;
     Toolbar toolbar;
     LinearLayout shimmerFrameLayout;
-    boolean isGoogleLogin;
 
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -72,6 +75,9 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        mAuth=FirebaseAuth.getInstance();
+        handleIncompleteRegistrationFailure();
+
         tabLayout=findViewById(R.id.tabLayout);
         viewPager=findViewById(R.id.viewPager);
         shimmerFrameLayout=findViewById(R.id.idShimmerLayoutView);
@@ -136,6 +142,22 @@ public class Main2Activity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void handleIncompleteRegistrationFailure(){
+        FirebaseUser user=mAuth.getCurrentUser();
+        List<? extends UserInfo> info= mAuth.getCurrentUser().getProviderData();
+        int provCount=info.size();
+        String a=info.get(1).getProviderId();
+        if(provCount==2&&info.get(1).getProviderId().equals(PhoneAuthProvider.PROVIDER_ID)){
+            mAuth.signOut();
+            Intent intent = new Intent(Main2Activity.this, SignupOrSigninActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Toast.makeText(this, "Error handled", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+            finish();
+        }
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -231,7 +253,6 @@ public class Main2Activity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final SharedPreferences.Editor editor=sharedPreferences.edit();
         switch (item.getItemId()) {
             case R.id.logout:
                 finish();
