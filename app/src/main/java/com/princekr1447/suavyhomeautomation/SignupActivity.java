@@ -74,10 +74,6 @@ public class SignupActivity extends AppCompatActivity {
     final String usersId_key="usersId";
     final String productKey_key="productKeys";
     final String urlString="https://suavy-home-automation-913b1-default-rtdb.firebaseio.com/productKeys/";
-    boolean flag=false;
-    public static final String SHARED_PREF="sharedPrefs";
-    public static final String SIGNEDIN="signedIn";
-    public static final String USERID="userId";
     String addressl1;
     String addressl2;
     String pincode;
@@ -93,8 +89,6 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
-        SharedPreferences sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
         Intent intent=getIntent();
         addressl1=intent.getStringExtra(SignupDetailsActivity.ADDRESS_LINE_1);
         addressl2=intent.getStringExtra(SignupDetailsActivity.ADDRESS_LINE_2);
@@ -178,37 +172,6 @@ public class SignupActivity extends AppCompatActivity {
     }*/
    void signupWithEmailAndPassword(String email,String password){
        progressVisible();
-       /*mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-           @Override
-           public void onComplete(@NonNull Task<AuthResult> task) {
-               if(task.isSuccessful()){
-                   Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                   FirebaseUser user=mAuth.getCurrentUser();
-                   user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                       @Override
-                       public void onSuccess(Void aVoid) {
-                           showDialogOnUserRegistered();
-                       }
-                   }).addOnFailureListener(new OnFailureListener() {
-                       @Override
-                       public void onFailure(@NonNull Exception e) {
-                           Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                       }
-                   });
-                   mAuth.signOut();
-               }
-               else{
-                   if(task.getException() instanceof FirebaseAuthUserCollisionException){
-                       Toast.makeText(SignupActivity.this, "you are already registered", Toast.LENGTH_SHORT).show();
-                   }else{
-                       Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                   }
-               }
-               progressInvisible();
-           }
-       });
-
-        */
        AuthCredential credential = EmailAuthProvider.getCredential(email, password);
        mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
            @Override
@@ -256,6 +219,7 @@ public class SignupActivity extends AppCompatActivity {
 
             */
             try {
+                progressVisible();
                 final GoogleSignInAccount account= task.getResult(ApiException.class);
                 mAuth.fetchSignInMethodsForEmail(account.getEmail()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
                     @Override
@@ -269,6 +233,7 @@ public class SignupActivity extends AppCompatActivity {
                         }else{
                             signInWithGoogleCredentials(account.getIdToken());
                         }
+                        progressInvisible();
                     }
                 });
 
@@ -286,21 +251,21 @@ public class SignupActivity extends AppCompatActivity {
         button_signup.setVisibility(View.VISIBLE);
     }
     public void signInWithGoogleCredentials(String idToken){
+        progressVisible();
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
-        FirebaseUser prevUser= mAuth.getCurrentUser();
-        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
-                if(!isNew){
-                    Toast.makeText(SignupActivity.this, "Credentials already belongs to an active user. Use different credentials or login instead.", Toast.LENGTH_SHORT).show();
-                    gsc.signOut();
-                    return;
-                }
                 if(task.isSuccessful()){
+                    Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                     homeActivity();
-                }else{
-                    Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                        Toast.makeText(SignupActivity.this, "you are already registered", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
                 progressInvisible();
             }
