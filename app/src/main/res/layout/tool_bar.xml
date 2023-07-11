@@ -11,4 +11,5 @@
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     app:layout_scrollFlags="scroll|enterAlways"
     android:layout_alignParentTop="true"
+    app:layout_collapseMode="pin"
     />

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class UserSignupInfo {
     String pincode;
-    ArrayList<String> productKey;
     String addressL1;
     String addressL2;
     String city;
@@ -12,9 +11,8 @@ public class UserSignupInfo {
     String country;
     String phoneNumber;
 
-    public UserSignupInfo(String addressL1,String addressL2, String city, String state,String pincode,String country,String phoneNumber, ArrayList<String> productKey) {
+    public UserSignupInfo(String addressL1,String addressL2, String city, String state,String pincode,String country,String phoneNumber) {
         this.pincode = pincode;
-        this.productKey = productKey;
         this.addressL1= addressL1;
         this.addressL2=addressL2;
         this.city = city;
@@ -22,13 +20,15 @@ public class UserSignupInfo {
         this.country=country;
         this.phoneNumber=phoneNumber;
     }
+    public UserSignupInfo() {
+    }
 
     public String getAddressL1() {
         return addressL1;
     }
 
     public void setAddressL1(String addressL1) {
-        addressL1 = addressL1;
+        this.addressL1 = addressL1;
     }
 
     public String getAddressL2() {
@@ -36,7 +36,7 @@ public class UserSignupInfo {
     }
 
     public void setAddressL2(String addressL2) {
-        addressL2 = addressL2;
+        this.addressL2 = addressL2;
     }
 
     public String getCity() {
@@ -61,14 +61,6 @@ public class UserSignupInfo {
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
-    }
-
-    public ArrayList<String> getProductKey() {
-        return productKey;
-    }
-
-    public void setProductKey(ArrayList<String> productKey) {
-        this.productKey = productKey;
     }
 
     public String getCountry() {

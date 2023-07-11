@@ -5,11 +5,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -50,6 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class Main2Activity extends AppCompatActivity {
     FirebaseAuth mAuth;
@@ -81,11 +84,11 @@ public class Main2Activity extends AppCompatActivity {
         tabLayout=findViewById(R.id.tabLayout);
         viewPager=findViewById(R.id.viewPager);
         shimmerFrameLayout=findViewById(R.id.idShimmerLayoutView);
-        tabLayout.setTabTextColors(getResources().getColor(R.color.colorAccent),getResources().getColor(R.color.colorAccent));
         //getSupportActionBar().hide();
         toolbar=findViewById(R.id.toolBar);
         //toolbar.inflateMenu(R.menu.main_menu);
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this,R.color.colorWhite));
         mAuth=FirebaseAuth.getInstance();
         FirebaseUser user=mAuth.getCurrentUser();
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
@@ -267,6 +270,10 @@ public class Main2Activity extends AppCompatActivity {
                  Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
                  startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
                  return (true);
+            case R.id.profile:
+                Intent i2 = new Intent(Main2Activity.this, ProfileActivity.class);
+                startActivityForResult(i2, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+                return (true);
         }
         return true;
     }

@@ -67,7 +67,6 @@ public class SignupActivity extends AppCompatActivity {
     Button button_signup;
     EditText editTextEmail;
     EditText editTextPassword;
-    ArrayList<String> productKeys;
     private FirebaseAuth mAuth;
     DatabaseReference databaseReferenceUsersId;
     DatabaseReference databaseReferenceProductKey;
@@ -97,7 +96,6 @@ public class SignupActivity extends AppCompatActivity {
         country=intent.getStringExtra(SignupDetailsActivity.COUNTRY);
         state=intent.getStringExtra(SignupDetailsActivity.STATE);
         phoneNumber=intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        productKeys=new ArrayList<>();
         button_signup=findViewById(R.id.buttonAccount);
         editTextEmail=findViewById(R.id.emailSignup);
         editTextPassword=findViewById(R.id.passwordSignup);
@@ -177,6 +175,7 @@ public class SignupActivity extends AppCompatActivity {
            @Override
            public void onComplete(@NonNull Task<AuthResult> task) {
                if(task.isSuccessful()){
+                   userSignupInfoUpdate(task.getResult().getUser().getUid());
                    Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                    FirebaseUser user=mAuth.getCurrentUser();
                    user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -258,6 +257,7 @@ public class SignupActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(SignupActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                    userSignupInfoUpdate(task.getResult().getUser().getUid());
                     homeActivity();
                 }
                 else{
@@ -292,5 +292,9 @@ public class SignupActivity extends AppCompatActivity {
         Intent intent=new Intent(SignupActivity.this,Main2Activity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+    public void userSignupInfoUpdate(String userId){
+       UserSignupInfo userSignupInfo=new UserSignupInfo(addressl1,addressl2,city,state,pincode,country,phoneNumber);
+        databaseReferenceUsersId.child(userId).child("personalData").setValue(userSignupInfo);
     }
 }

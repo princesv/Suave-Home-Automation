@@ -7,6 +7,7 @@
     <string name="signup_text">Create new account</string>
     <string name="address_details">Fill address details</string>
     <string name="logout_text">Log out</string>
+    <string name="user_profile">Profile</string>
     <string name="add_line1">House no/ Apartment no</string>
     <string name="add_line2">Street/ Area/ Colony</string>
     <string name="city">City</string>
@@ -41,4 +42,7 @@
     <string name="step4">Step 4 of 4: Create new credentials</string>
     <string name="signup_dialog_text">Please verify your email through the verification link shared with you on email and login using the same credentials.</string>
     <string name="LoginUsingGoogle">Login using Google</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone No:</string>
+    <string name="emailId">Email ID:</string>
 </resources>

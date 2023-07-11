@@ -29,6 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
+                app:tabTextColor="@color/colorAccent"
                 android:visibility="gone"/>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -40,38 +41,38 @@
             android:nestedScrollingEnabled="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:visibility="gone"/>
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorPrimaryDark"
+            android:id="@+id/idShimmerLayoutView"
+            android:layout_marginTop="64dp">
+            <com.facebook.shimmer.ShimmerFrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/colorPrimaryDark"
-                android:id="@+id/idShimmerLayoutView"
-                android:layout_marginTop="64dp">
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity='center'
-                    >
+                android:gravity='center'
+                >
                 <include layout="@layout/switchboards_list_shimmer_placeholder"/>
-                </com.facebook.shimmer.ShimmerFrameLayout>
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity='center'
-                    >
+            </com.facebook.shimmer.ShimmerFrameLayout>
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity='center'
+                >
                 <include layout="@layout/switchboards_list_shimmer_placeholder"/>
-                </com.facebook.shimmer.ShimmerFrameLayout>
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity='center'
-                    >
+            </com.facebook.shimmer.ShimmerFrameLayout>
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity='center'
+                >
                 <include layout="@layout/switchboards_list_shimmer_placeholder"/>
-                </com.facebook.shimmer.ShimmerFrameLayout>
-            </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+        </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-    </LinearLayout>
+</LinearLayout>
