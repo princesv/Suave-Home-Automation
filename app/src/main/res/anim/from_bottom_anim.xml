@@ -4,8 +4,8 @@
 
     <translate
         android:duration="300"
-        android:fromYDelta="300%"
-        android:toYDelta="0%" />
+        android:fromXDelta="300%"
+        android:toXDelta="0%" />
 
     <scale
         android:pivotY="50%"

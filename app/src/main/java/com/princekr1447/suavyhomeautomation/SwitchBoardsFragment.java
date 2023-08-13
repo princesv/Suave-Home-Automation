@@ -1,14 +1,19 @@
 package com.princekr1447.suavyhomeautomation;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -34,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.princekr1447.suavyhomeautomation.Utils.NonScrollExpandableListView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +58,7 @@ public class SwitchBoardsFragment extends Fragment {
     DatabaseReference refProductKey;
     String keyPos;
     ArrayList<SwitchBoard> switchBoardList;
-    ExpandableListView expandableListViewSwitcheBoards;
+    NonScrollExpandableListView expandableListViewSwitcheBoards;
     FloatingActionButton buttonEditCentralModuleName;
     String emailEncoded;
     Activity context;
@@ -191,19 +197,27 @@ public class SwitchBoardsFragment extends Fragment {
         btnAddRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
+               /* AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
                 LayoutInflater inflater=context.getLayoutInflater();
                 final View dialogView=inflater.inflate(R.layout.room_dialog,null);
                 dialogBuilder.setView(dialogView);
+                */
+                final Dialog dialogView = new Dialog(context);
+                dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogView.setContentView(R.layout.bottom_sheet_new_room);
                 final EditText newRoomTitleEditText=dialogView.findViewById(R.id.newRoomTitle);
                 Button btn=dialogView.findViewById(R.id.btnRoomDialog);
-                btn.setText(R.string.create_room);
-                final AlertDialog alertDialog=dialogBuilder.create();
-                alertDialog.show();
+                //final AlertDialog alertDialog=dialogBuilder.create();
+                dialogView.show();
+                dialogView.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialogView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogView.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+                dialogView.getWindow().setGravity(Gravity.BOTTOM);
+                newRoomTitleEditText.requestFocus();
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(newRoomTitleEditText.getText().equals("")){
+                        if(newRoomTitleEditText.getText().toString().trim().equals("")){
                             Toast.makeText(getContext(), "Text field empty!", Toast.LENGTH_SHORT).show();
                         }else{
                             String key=refProductKey.child(productKey).child("rooms").push().getKey();
@@ -216,7 +230,7 @@ public class SwitchBoardsFragment extends Fragment {
                             }else{
                                 Toast.makeText(getContext(), "Failed to create room. try again!", Toast.LENGTH_SHORT).show();
                             }
-                            alertDialog.dismiss();
+                            dialogView.dismiss();
                         }
                     }
                 });
@@ -225,14 +239,18 @@ public class SwitchBoardsFragment extends Fragment {
         buttonEditCentralModuleName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
-                LayoutInflater inflater=context.getLayoutInflater();
-                final View dialogView=inflater.inflate(R.layout.central_module_update_dialog,null);
-                dialogBuilder.setView(dialogView);
+                final Dialog dialogView = new Dialog(context);
+                dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogView.setContentView(R.layout.bottom_sheet_edit_title);
+
                 final EditText editText=dialogView.findViewById(R.id.cm_name);
                 final Button cmUpdateButton=dialogView.findViewById(R.id.cm_update_button);
-                final AlertDialog alertDialog=dialogBuilder.create();
-                alertDialog.show();
+                dialogView.show();
+                dialogView.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialogView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogView.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+                dialogView.getWindow().setGravity(Gravity.BOTTOM);
+                editText.setText(centralModule.getName());
                 cmUpdateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -242,8 +260,10 @@ public class SwitchBoardsFragment extends Fragment {
                         }else{
                             //   CentralModule cm=new CentralModule(centralModules.get(position).getProductKey(),s1);
                             CentralModule cmUpdated=new CentralModule(s1,productKey,centralModule.id);
+                            centralModule.setName(s1);
                             refUserId.child(emailEncoded).child("productKeys").child(centralModule.getId()).setValue(cmUpdated);
-                            alertDialog.dismiss();
+
+                            dialogView.dismiss();
                         }
                     }
                 });

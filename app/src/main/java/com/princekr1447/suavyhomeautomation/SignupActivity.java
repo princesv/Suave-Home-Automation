@@ -11,11 +11,15 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.service.autofill.UserData;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -89,12 +93,12 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         Intent intent=getIntent();
-        addressl1=intent.getStringExtra(SignupDetailsActivity.ADDRESS_LINE_1);
-        addressl2=intent.getStringExtra(SignupDetailsActivity.ADDRESS_LINE_2);
-        pincode=intent.getStringExtra(SignupDetailsActivity.PINCODE);
-        city=intent.getStringExtra(SignupDetailsActivity.CITY);
-        country=intent.getStringExtra(SignupDetailsActivity.COUNTRY);
-        state=intent.getStringExtra(SignupDetailsActivity.STATE);
+        addressl1=intent.getStringExtra(CommonUtil.ADDRESS_LINE_1);
+        addressl2=intent.getStringExtra(CommonUtil.ADDRESS_LINE_2);
+        pincode=intent.getStringExtra(CommonUtil.PINCODE);
+        city=intent.getStringExtra(CommonUtil.CITY);
+        country=intent.getStringExtra(CommonUtil.COUNTRY);
+        state=intent.getStringExtra(CommonUtil.STATE);
         phoneNumber=intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         button_signup=findViewById(R.id.buttonAccount);
         editTextEmail=findViewById(R.id.emailSignup);
@@ -272,9 +276,10 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
     public void showDialogOnUserRegistered(){
-        final Dialog dialog=new Dialog(SignupActivity.this);
+        final Dialog dialog = new Dialog(this);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setContentView(R.layout.signup_dialog_layout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_verify_email);
         Button dialogButton=dialog.findViewById(R.id.dialog_btn_nav_to_signin);
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,10 +287,15 @@ public class SignupActivity extends AppCompatActivity {
                 Intent intent=new Intent(SignupActivity.this,SigninActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+
                 dialog.hide();
             }
         });
         dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
     public void homeActivity() {
         //String emailEdited=emailSignin.replace(".","DOTT");

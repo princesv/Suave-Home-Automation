@@ -8,10 +8,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.princekr1447.suavyhomeautomation.CommonUtil;
+import com.princekr1447.suavyhomeautomation.ProfileActivity;
 import com.princekr1447.suavyhomeautomation.R;
 import com.princekr1447.suavyhomeautomation.SignupActivity;
 import com.princekr1447.suavyhomeautomation.SignupOrSigninActivity;
+import com.princekr1447.suavyhomeautomation.UserSignupInfo;
 
 public class SignupDetailsActivity extends AppCompatActivity {
     EditText editTextPincode;
@@ -22,12 +29,9 @@ public class SignupDetailsActivity extends AppCompatActivity {
     EditText getEditTextAddressLine2;
     Button btnNext;
     TextView textStep;
-    final public static String CITY="city";
-    final public static String COUNTRY="country";
-    final public static String PINCODE="pincode";
-    final public static String ADDRESS_LINE_1="address line 1";
-    final public static String ADDRESS_LINE_2="address line 2";
-    final public static String STATE="state";
+    TextView activityHeader;
+    DatabaseReference databaseReferenceUsersId;
+    final String usersId_key="usersId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +45,28 @@ public class SignupDetailsActivity extends AppCompatActivity {
         editTextState=findViewById(R.id.textState);
         getEditTextAddressLine2=findViewById(R.id.editAddressLine2);
         textStep=findViewById(R.id.stepNumberTextView);
+        activityHeader=findViewById(R.id.createNewAccountTextView);
         textStep.setText(R.string.step3);
         Intent parentIntent=getIntent();
-        final String phoneNumber=parentIntent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+        boolean flag=parentIntent.getBooleanExtra(ProfileActivity.IS_CHANGE_ADDRESS,false);
+        String phoneNumber="";
+        if(flag){
+            textStep.setVisibility(View.GONE);
+            activityHeader.setText("Change your address");
+            btnNext.setText("save");
+            editTextState.setText(parentIntent.getStringExtra(CommonUtil.STATE));
+            editTextAddressLine1.setText(parentIntent.getStringExtra(CommonUtil.ADDRESS_LINE_1));
+            getEditTextAddressLine2.setText(parentIntent.getStringExtra(CommonUtil.ADDRESS_LINE_2));
+            editTextCity.setText(parentIntent.getStringExtra(CommonUtil.CITY));
+            editTextCountry.setText(parentIntent.getStringExtra(CommonUtil.COUNTRY));
+            editTextPincode.setText(parentIntent.getStringExtra(CommonUtil.PINCODE));
+            databaseReferenceUsersId= FirebaseDatabase.getInstance().getReference(usersId_key);
+        }else {
+            phoneNumber = parentIntent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+        }
+        changeOrUpdateAddress(flag,phoneNumber);
+    }
+    public void changeOrUpdateAddress(final boolean flag, final String phoneNumber){
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,15 +106,22 @@ public class SignupDetailsActivity extends AppCompatActivity {
                     editTextState.requestFocus();
                     return;
                 }
-                Intent intent=new Intent(SignupDetailsActivity.this, SignupActivity.class);
-                intent.putExtra(CITY,city);
-                intent.putExtra(COUNTRY,country);
-                intent.putExtra(ADDRESS_LINE_1,addl1);
-                intent.putExtra(ADDRESS_LINE_2,addl2);
-                intent.putExtra(PINCODE,pincode);
-                intent.putExtra(STATE,state);
-                intent.putExtra(Intent.EXTRA_PHONE_NUMBER,phoneNumber);
-                startActivity(intent);
+                if(flag){
+                    UserSignupInfo userSignupInfo=new UserSignupInfo(addl1,addl2,city,state,pincode,country,phoneNumber);
+                    databaseReferenceUsersId.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("personalData").setValue(userSignupInfo);
+                    Toast.makeText(SignupDetailsActivity.this, "Adress changed successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else {
+                    Intent intent = new Intent(SignupDetailsActivity.this, SignupActivity.class);
+                    intent.putExtra(CommonUtil.CITY, city);
+                    intent.putExtra(CommonUtil.COUNTRY, country);
+                    intent.putExtra(CommonUtil.ADDRESS_LINE_1, addl1);
+                    intent.putExtra(CommonUtil.ADDRESS_LINE_2, addl2);
+                    intent.putExtra(CommonUtil.PINCODE, pincode);
+                    intent.putExtra(CommonUtil.STATE, state);
+                    intent.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber);
+                    startActivity(intent);
+                }
             }
         });
     }

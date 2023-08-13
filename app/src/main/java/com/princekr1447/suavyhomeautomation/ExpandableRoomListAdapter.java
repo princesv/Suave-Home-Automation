@@ -2,15 +2,20 @@ package com.princekr1447.suavyhomeautomation;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -157,15 +162,21 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
     private void renameRoom(final int groupPosition){
-        AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
-        LayoutInflater inflater=context.getLayoutInflater();
-        final View dialogView=inflater.inflate(R.layout.room_dialog,null);
-        dialogBuilder.setView(dialogView);
+        final Dialog dialogView = new Dialog(context);
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogView.setContentView(R.layout.bottom_sheet_edit_room_title);
+
         final EditText newRoomTitleEditText=dialogView.findViewById(R.id.newRoomTitle);
-        Button btn=dialogView.findViewById(R.id.btnRoomDialog);
+        final Button btn=dialogView.findViewById(R.id.btnRoomDialog);
+        final TextView dialogText=dialogView.findViewById(R.id.enterRoomTxt);
         btn.setText(R.string.rename_text);
-        final AlertDialog alertDialog=dialogBuilder.create();
-        alertDialog.show();
+        newRoomTitleEditText.setText(rooms.get(groupPosition).getTitle());
+        dialogText.setText(R.string.change_room_name);
+        dialogView.show();
+        dialogView.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogView.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+        dialogView.getWindow().setGravity(Gravity.BOTTOM);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,14 +185,43 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                 }else{
                     refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("title").setValue(newRoomTitleEditText.getText().toString());
                     Toast.makeText(context, "Room renamed Successfully!", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss();
+                    dialogView.dismiss();
                 }
             }
         });
     }
-    private  void deleteRoom(final int groupPosition){
-        AsyncTaskDeleteRoom asyncTaskDeleteRoom=new AsyncTaskDeleteRoom();
-        asyncTaskDeleteRoom.execute(groupPosition);
+    private  void deleteRoom(int groupPosition){
+        showConfirmDeleteRoomDialog(groupPosition);
+    }
+    public void showConfirmDeleteRoomDialog(final int groupPosition){
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_confirm_dialog);
+        ImageView confirm=dialog.findViewById(R.id.confirmBtn);
+        ImageView cancel=dialog.findViewById(R.id.cancelBtn);
+        TextView confirmText=dialog.findViewById(R.id.confirmText);
+        confirmText.setText(R.string.confirm_delete_room);
+        TextView confirmTextDetail=dialog.findViewById(R.id.confirmDetailText);
+        confirmTextDetail.setText(R.string.confirm_delete_room_detail);
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AsyncTaskDeleteRoom asyncTaskDeleteRoom=new AsyncTaskDeleteRoom();
+                asyncTaskDeleteRoom.execute(groupPosition);
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
     private class AsyncTaskDeleteRoom extends AsyncTask<Integer, String, String> {
         @Override
@@ -528,11 +568,10 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     private void showUpdateDialog(final int pos, final String switchBoardTitle, final int groupPosition){
         final int positionInitial=groupPosition;
         final int[] positionFinal = {positionInitial};
-        AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(context);
-        LayoutInflater inflater=LayoutInflater.from(context);
-        final View dialogView=inflater.inflate(R.layout.update_dialog,null);
+        final Dialog dialogView = new Dialog(context);
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogView.setContentView(R.layout.bottom_sheet_update_switch_board);
 
-        dialogBuilder.setView(dialogView);
         final EditText ets1=dialogView.findViewById(R.id.dialogSwitch1);
         final EditText ets2=dialogView.findViewById(R.id.dialogSwitch2);
         final EditText ets3=dialogView.findViewById(R.id.dialogSwitch3);
@@ -582,8 +621,13 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
         ets7.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name7);
         ets8.setText(switchBoardList.get(indicesArrayList.get(groupPosition).get(pos).getValue()).name8);
         dropdown.setSelection(groupPosition);
-        final AlertDialog alertDialog=dialogBuilder.create();
-        alertDialog.show();
+
+        dialogView.show();
+        dialogView.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogView.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+        dialogView.getWindow().setGravity(Gravity.BOTTOM);
+
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -612,7 +656,7 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
                         refProductKey.child(productKey).child("rooms").child(rooms.get(groupPosition).getId()).child("indices").child(indicesArrayList.get(groupPosition).get(pos).getKey()).removeValue();
                     }
                     Toast.makeText(context, "Update Successful", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss();
+                    dialogView.dismiss();
                 }
             }
         });

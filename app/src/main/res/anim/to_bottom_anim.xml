@@ -4,8 +4,8 @@
     android:fillAfter="true">
     <translate
         android:duration="300"
-        android:fromYDelta="0%"
-        android:toYDelta="300%" />
+        android:fromXDelta="0%"
+        android:toXDelta="300%" />
 
     <scale
         android:pivotY="50%"

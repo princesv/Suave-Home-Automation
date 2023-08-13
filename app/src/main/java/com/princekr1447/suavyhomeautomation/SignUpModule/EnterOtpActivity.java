@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,16 +16,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserInfo;
+import com.princekr1447.suavyhomeautomation.CommonUtil;
 import com.princekr1447.suavyhomeautomation.Main2Activity;
 import com.princekr1447.suavyhomeautomation.R;
 import com.princekr1447.suavyhomeautomation.SignupActivity;
@@ -44,16 +49,15 @@ public class EnterOtpActivity extends AppCompatActivity {
     ProgressBar loadingPB;
     TextView textStep;
     Button verifyOtp;
-
-    public static final String LOGIN_FLAG="LOGIN_FLAG";
-    SharedPreferences sharedPreferences;
     Boolean isLogin;
+    Boolean isChangePhoneNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_otp);
-        isLogin=getIntent().getBooleanExtra(LOGIN_FLAG,false);
+        isLogin=getIntent().getBooleanExtra(CommonUtil.LOGIN_FLAG,false);
+        isChangePhoneNo=getIntent().getBooleanExtra(CommonUtil.CHANGE_PHONE_NUMBER,false);
         et1=findViewById(R.id.et1);
         et2=findViewById(R.id.et2);
         et3=findViewById(R.id.et3);
@@ -61,7 +65,11 @@ public class EnterOtpActivity extends AppCompatActivity {
         et5=findViewById(R.id.et5);
         et6=findViewById(R.id.et6);
         textStep=findViewById(R.id.stepNumberTextView);
-        textStep.setText(R.string.step2);
+        if(isChangePhoneNo||isLogin){
+            textStep.setVisibility(View.INVISIBLE);
+        }else {
+            textStep.setText(R.string.step2);
+        }
         loadingPB=findViewById(R.id.loadingPB);
         verifyOtp=findViewById(R.id.button_verify_otp);
         setupOtpInputs();
@@ -88,7 +96,7 @@ public class EnterOtpActivity extends AppCompatActivity {
 
              */
                     loadingPB.setVisibility(View.VISIBLE);
-                    PhoneAuthCredential credential=PhoneAuthProvider.getCredential(otpId,otp);
+                    final PhoneAuthCredential credential=PhoneAuthProvider.getCredential(otpId,otp);
                     if(isLogin){
                         FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -101,7 +109,7 @@ public class EnterOtpActivity extends AppCompatActivity {
                                         finish();
                                         return;
                                     }
-                                    Toast.makeText(EnterOtpActivity.this, "Phone verification successful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(EnterOtpActivity.this, "Logged in successful", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(EnterOtpActivity.this, Main2Activity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
@@ -114,6 +122,10 @@ public class EnterOtpActivity extends AppCompatActivity {
                         });
                         return;
                     }
+                  if(isChangePhoneNo){
+                      unLinkAndUpdatePhoneNumber(credential);
+                      return;
+                  }
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -139,6 +151,33 @@ public class EnterOtpActivity extends AppCompatActivity {
                         }
                     });
                 }
+            }
+        });
+    }
+    public void unLinkAndUpdatePhoneNumber(final PhoneAuthCredential credential){
+        FirebaseAuth.getInstance().getCurrentUser().unlink(PhoneAuthProvider.PROVIDER_ID).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                updatePhoneNumber(credential);
+            }
+        });
+    }
+    public void updatePhoneNumber(PhoneAuthCredential credential){
+        FirebaseAuth.getInstance().getCurrentUser().linkWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(EnterOtpActivity.this, "Phone number updated successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else{
+                    if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                        Toast.makeText(EnterOtpActivity.this, "you are already registered", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(EnterOtpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                loadingPB.setVisibility(View.INVISIBLE);
             }
         });
     }

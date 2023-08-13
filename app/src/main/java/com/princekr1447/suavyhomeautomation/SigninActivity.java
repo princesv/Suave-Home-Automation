@@ -22,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -37,6 +38,7 @@ public class SigninActivity extends AppCompatActivity {
     EditText signin_password;
     TextView resetPasswordTextView;
     Button signin_button;
+    TextView sendNewVerificationLink;
     private FirebaseAuth mAuth;
     public static final String SIGNEDIN="signedIn";
     public static final String USERID="userId";
@@ -106,8 +108,19 @@ public class SigninActivity extends AppCompatActivity {
                             if(isUserVerified()){
                                 HomeActivity();
                             }else{
-                                Toast.makeText(SigninActivity.this, "Please verify your email id before trying to log in.", Toast.LENGTH_SHORT).show();
-                                mAuth.signOut();
+
+                                mAuth.getCurrentUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(SigninActivity.this, "Email id not verified. Verify through new link sent to your mail.", Toast.LENGTH_SHORT).show();
+                                        mAuth.signOut();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(SigninActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }else{
                             Toast.makeText(SigninActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -143,7 +156,7 @@ public class SigninActivity extends AppCompatActivity {
 
     public void logInWithPhone(View view) {
         Intent intent=new Intent(SigninActivity.this, PhoneActivity.class);
-        intent.putExtra(EnterOtpActivity.LOGIN_FLAG,true);
+        intent.putExtra(CommonUtil.LOGIN_FLAG,true);
         startActivity(intent);
     }
 
@@ -208,7 +221,6 @@ public class SigninActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(SigninActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                progressInvisible();
             }
         });
     }

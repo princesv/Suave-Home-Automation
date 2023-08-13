@@ -18,10 +18,10 @@
         android:visibility="gone"/>
     <TextView
         android:id="@+id/createNewAccountTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="48sp"
-        android:text="@string/signup_text"
+        android:text="@string/enterOTP"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

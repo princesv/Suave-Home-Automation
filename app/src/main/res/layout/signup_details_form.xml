@@ -117,7 +117,6 @@
             android:text="@string/address_details"
             android:textColor="#303F9F"
             android:textSize="25sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

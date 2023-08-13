@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.princekr1447.suavyhomeautomation.SignUpModule.SignupDetailsActivity;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -38,6 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView emailTV;
     TextView phoneTV;
     ImageView imageHome;
+    public static String IS_CHANGE_ADDRESS="change address";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,5 +107,16 @@ public class ProfileActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
+    public void changeAddress(View view){
+        Intent intent=new Intent(ProfileActivity.this, SignupDetailsActivity.class);
+        intent.putExtra(IS_CHANGE_ADDRESS,true);
+        intent.putExtra(CommonUtil.CITY, tvCity.getText());
+        intent.putExtra(CommonUtil.COUNTRY, tvCountry.getText());
+        intent.putExtra(CommonUtil.ADDRESS_LINE_1, tvAddressLine1.getText());
+        intent.putExtra(CommonUtil.ADDRESS_LINE_2, tvAddressLine2.getText());
+        intent.putExtra(CommonUtil.PINCODE, tvPincode.getText());
+        intent.putExtra(CommonUtil.STATE, tvState.getText());
+        startActivity(intent);
     }
 }

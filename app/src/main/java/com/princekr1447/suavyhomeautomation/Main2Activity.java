@@ -2,7 +2,6 @@ package com.princekr1447.suavyhomeautomation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -11,32 +10,20 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TableLayout;
 import android.widget.Toast;
 
-import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -46,13 +33,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.princekr1447.suavyhomeautomation.SignUpModule.EnterOtpActivity;
+import com.princekr1447.suavyhomeautomation.SettingsModule.SettingsActivity;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 public class Main2Activity extends AppCompatActivity {
     FirebaseAuth mAuth;
@@ -71,6 +58,7 @@ public class Main2Activity extends AppCompatActivity {
     ViewPager viewPager;
     Toolbar toolbar;
     LinearLayout shimmerFrameLayout;
+    ImageView imageHome;
 
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -86,6 +74,7 @@ public class Main2Activity extends AppCompatActivity {
         shimmerFrameLayout=findViewById(R.id.idShimmerLayoutView);
         //getSupportActionBar().hide();
         toolbar=findViewById(R.id.toolBar);
+        imageHome=findViewById(R.id.image_home);
         //toolbar.inflateMenu(R.menu.main_menu);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(ContextCompat.getColor(this,R.color.colorWhite));
@@ -103,7 +92,22 @@ public class Main2Activity extends AppCompatActivity {
         gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc= GoogleSignIn.getClient(this,gso);
         GoogleSignInAccount account=GoogleSignIn.getLastSignedInAccount(this);
+        Picasso.get().load(CommonUtil.profilePhotoUrl).centerCrop().fit().into(imageHome);
+        refUserId.child(emailEncoded).child("profilePhotoUrl").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.getValue()!=null){
+                    CommonUtil.profilePhotoUrl=snapshot.getValue().toString();
+                }
+                Picasso.get().load(CommonUtil.profilePhotoUrl).networkPolicy(NetworkPolicy.NO_CACHE).centerCrop().fit().into(imageHome);
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         refUserId.child(emailEncoded).child("productKeys").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -257,22 +261,13 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.logout:
-                finish();
-                mAuth.signOut();
-                gsc.signOut();
-                Intent intent = new Intent(Main2Activity.this, SignupOrSigninActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                return (true);
             case R.id.addCentralModule:
                  Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
                  startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
                  return (true);
-            case R.id.profile:
-                Intent i2 = new Intent(Main2Activity.this, ProfileActivity.class);
-                startActivityForResult(i2, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+            case R.id.settings:
+                Intent i2 = new Intent(Main2Activity.this, SettingsActivity.class);
+                startActivity(i2);
                 return (true);
         }
         return true;

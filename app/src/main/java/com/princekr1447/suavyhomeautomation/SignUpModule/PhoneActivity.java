@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.credentials.HintRequest;
 import com.hbb20.CountryCodePicker;
+import com.princekr1447.suavyhomeautomation.CommonUtil;
 import com.princekr1447.suavyhomeautomation.R;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class PhoneActivity extends AppCompatActivity {
     EditText phoneNumber;
     CountryCodePicker ccp;
     TextView textStep;
+    TextView pageHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,16 @@ public class PhoneActivity extends AppCompatActivity {
         ccp=findViewById(R.id.ccp);
         ccp.registerCarrierNumberEditText(phoneNumber);
         textStep=findViewById(R.id.stepNumberTextView);
-        textStep.setText(R.string.step1);
-
+        pageHeader=findViewById(R.id.createNewAccountTextView);
+        if(getIntent().getBooleanExtra(CommonUtil.CHANGE_PHONE_NUMBER,false)){
+         pageHeader.setText("Change phone number");
+         textStep.setText("Enter new phone number to be linked with this account");
+        }else if(getIntent().getBooleanExtra(CommonUtil.LOGIN_FLAG,false)){
+            pageHeader.setText("Login using phone number");
+            textStep.setVisibility(View.INVISIBLE);
+        }else {
+            textStep.setText(R.string.step1);
+        }
     }
    /* public static String httpRequestToSendOTP(String phoneno) {
         final String apiAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoLWJhY2tlbmQ6YXBwIiwic3ViIjoiZTM5NTdjYTQtNTcwYy00MDAzLThmOTMtZWRiNWQxMWRhNDIxIn0.Dbam-CVSCLMy0cKbensM8TI6m6rOGPLlU9cnP23CPoU";
@@ -121,7 +131,8 @@ public class PhoneActivity extends AppCompatActivity {
        taskVerifyPhone.execute(phoneno);*/
        Intent intent = new Intent(PhoneActivity.this,EnterOtpActivity.class);
        intent.putExtra(Intent.EXTRA_PHONE_NUMBER,ccp.getFullNumberWithPlus().replace(" ",""));
-       intent.putExtra(EnterOtpActivity.LOGIN_FLAG,getIntent().getBooleanExtra(EnterOtpActivity.LOGIN_FLAG,false));
+       intent.putExtra(CommonUtil.LOGIN_FLAG,getIntent().getBooleanExtra(CommonUtil.LOGIN_FLAG,false));
+       intent.putExtra(CommonUtil.CHANGE_PHONE_NUMBER,getIntent().getBooleanExtra(CommonUtil.CHANGE_PHONE_NUMBER,false));
        startActivity(intent);
    }
 }
