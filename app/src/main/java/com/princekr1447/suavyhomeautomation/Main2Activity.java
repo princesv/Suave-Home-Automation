@@ -96,8 +96,10 @@ public class Main2Activity extends AppCompatActivity {
         refUserId.child(emailEncoded).child("profilePhotoUrl").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.getValue()!=null){
+                if(!snapshot.getValue().equals("NA")){
                     CommonUtil.profilePhotoUrl=snapshot.getValue().toString();
+                }else{
+                    CommonUtil.profilePhotoUrl=CommonUtil.defaultProfilePhoto;
                 }
                 Picasso.get().load(CommonUtil.profilePhotoUrl).networkPolicy(NetworkPolicy.NO_CACHE).centerCrop().fit().into(imageHome);
 

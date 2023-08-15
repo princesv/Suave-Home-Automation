@@ -306,5 +306,6 @@ public class SignupActivity extends AppCompatActivity {
     public void userSignupInfoUpdate(String userId){
        UserSignupInfo userSignupInfo=new UserSignupInfo(addressl1,addressl2,city,state,pincode,country,phoneNumber);
         databaseReferenceUsersId.child(userId).child("personalData").setValue(userSignupInfo);
+        databaseReferenceUsersId.child(userId).child("profilePhotoUrl").setValue("NA");
     }
 }

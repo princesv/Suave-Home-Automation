@@ -2,6 +2,7 @@ package com.princekr1447.suavyhomeautomation;
 
 public class CommonUtil {
     public static String profilePhotoUrl="https://firebasestorage.googleapis.com/v0/b/suavy-home-automation-913b1.appspot.com/o/default-home1.jpg?alt=media&token=0af0c35e-e13d-47a0-80f2-a9288773e182";
+    public static String defaultProfilePhoto="https://firebasestorage.googleapis.com/v0/b/suavy-home-automation-913b1.appspot.com/o/default-home1.jpg?alt=media&token=0af0c35e-e13d-47a0-80f2-a9288773e182";
     final public static String CITY="city";
     final public static String COUNTRY="country";
     final public static String PINCODE="pincode";
