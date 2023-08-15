@@ -122,13 +122,23 @@ public class ExpandableRoomListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(context).inflate(R.layout.room_card_view, parent, false);
         TextView roomTitle=convertView.findViewById(R.id.roomTitle);
+        TextView noOfSwitchboards=convertView.findViewById(R.id.noOfSwitchboards);
+        int noSb=0;
+        if(indicesArrayList.get(groupPosition)!=null) {
+            noSb=indicesArrayList.get(groupPosition).size();
+        }
+        noOfSwitchboards.setText("Switchboards: "+noSb);
         final ImageView arrow=convertView.findViewById(R.id.arrow);
+        if(noSb==0){
+            arrow.setVisibility(View.INVISIBLE);
+        }else{
+            arrow.setVisibility(View.VISIBLE);
+        }
         if(arrows[groupPosition]==1){
             arrow.animate().rotation(180).setDuration(0).start();
         }
         roomTitle.setText(rooms.get(groupPosition).getTitle());
         Button editButton=convertView.findViewById(R.id.editRoomButton);
-        final int[] rotationAngle={0};
         if(groupPosition==0){
             editButton.setVisibility(View.INVISIBLE);
             return convertView;

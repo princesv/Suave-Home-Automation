@@ -2,15 +2,21 @@ package com.princekr1447.suavyhomeautomation;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Camera;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.net.Uri;
@@ -18,9 +24,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +47,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class QrScannerActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 201;
@@ -48,8 +60,6 @@ public class QrScannerActivity extends AppCompatActivity {
     String intentData = "";
     SurfaceView surfaceView;
     private Uri imageUri;
-    ImageView importFromGalleryBtn;
-    ImageView flashLightBtn;
     boolean flashState=false;
 
     /* access modifiers changed from: protected */
@@ -61,20 +71,48 @@ public class QrScannerActivity extends AppCompatActivity {
 
     private void initComponents() {
         this.surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
-        importFromGalleryBtn=findViewById(R.id.importFromGalleryBtn);
-        flashLightBtn=findViewById(R.id.flashLightBtn);
+        initDialog();
+    }
+    public void initDialog(){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_qr_activity);
+        dialog.setCanceledOnTouchOutside(false);
+        ImageView importFromGalleryBtn=dialog.findViewById(R.id.importFromGalleryBtn);
+        ImageView enterKeyManuallyBtn=dialog.findViewById(R.id.enterKeyManuallyBtn);
         importFromGalleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takeBarcodePicture();
             }
         });
-        flashLightBtn.setOnClickListener(new View.OnClickListener() {
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
-            public void onClick(View v) {
-                flashLightStateChange();
+            public void onDismiss(DialogInterface dialog) {
+                finish();
             }
         });
+        final EditText enterKeyManuallyET=dialog.findViewById(R.id.enterKeyManuallyET);
+        enterKeyManuallyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String prodKeyaTxt=enterKeyManuallyET.getText().toString().trim();
+                if(prodKeyaTxt.isEmpty()){
+                    enterKeyManuallyET.requestFocus();
+                    enterKeyManuallyET.setError("Text field empty");
+                    return;
+                }
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result",prodKeyaTxt);
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
+            }
+        });
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.SheetDialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
     private void initialiseDetectorsAndSources() {
@@ -259,5 +297,8 @@ public class QrScannerActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+
+
     }
 }

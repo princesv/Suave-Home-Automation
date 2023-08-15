@@ -143,6 +143,8 @@ public class ProfileActivity extends AppCompatActivity {
         deletePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
+                progressBar.setVisibility(View.VISIBLE);
                 StorageReference ref
                         = storageReference
                         .child(
@@ -154,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(ProfileActivity.this, "Home picture removed successfully!", Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
+                                progressBar.setVisibility(View.INVISIBLE);
                             }
                         });
                     }

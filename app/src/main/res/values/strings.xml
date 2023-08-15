@@ -66,5 +66,7 @@
     <string name="confirm_delete_room_detail">Are you sure you want to delete this room? All the switchboards in this room will be transferred to stand alone list.</string>
     <string name="change_room_name">Change room name</string>
     <string name="import_from_gallery">Import from gallery</string>
-    <string name="flashlight">Flashlight</string>
+    <string name="enter_manually">Enter key manually instead</string>
+    <string name="connect_manually">Connect manually</string>
+    <string name="switchboards">Switchboards: </string>
 </resources>
