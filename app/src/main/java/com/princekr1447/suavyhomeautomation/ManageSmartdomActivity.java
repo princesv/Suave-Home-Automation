@@ -87,9 +87,9 @@ public class ManageSmartdomActivity extends AppCompatActivity implements ManageS
         ImageView confirm=dialog.findViewById(R.id.confirmBtn);
         ImageView cancel=dialog.findViewById(R.id.cancelBtn);
         TextView confirmText=dialog.findViewById(R.id.confirmText);
-        confirmText.setText(R.string.confirm_delete_room);
+        confirmText.setText(R.string.free_smartdom_text);
         TextView confirmTextDetail=dialog.findViewById(R.id.confirmDetailText);
-        confirmTextDetail.setText(R.string.confirm_delete_room_detail);
+        confirmTextDetail.setText(R.string.free_smartdom_detail_text);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

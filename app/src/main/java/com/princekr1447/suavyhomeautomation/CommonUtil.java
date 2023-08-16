@@ -11,4 +11,5 @@ public class CommonUtil {
     final public static String STATE="state";
     final public static String CHANGE_PHONE_NUMBER="Change phone number";
     public static final String LOGIN_FLAG="LOGIN_FLAG";
+    public static final String CAMERA_PERMISSION="CAM PERMISSION";
 }

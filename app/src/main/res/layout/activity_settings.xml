@@ -44,23 +44,27 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_person"
             />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile\n"
-            android:lines="2"
+            android:text="@string/user_profile"
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:paddingLeft="10dp"
             />
         <TextView
-            android:layout_marginTop="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit your Profile"
-            android:layout_marginLeft="-60dp"
+            android:text="@string/profile_setting_details"
             android:textColor="#BDBAC1"
+            android:paddingLeft="10dp"
+
             />
+            </LinearLayout>
     </LinearLayout>
 
 
@@ -78,23 +82,26 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_vpn_key_24dp"
             />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Authentication\n"
-            android:lines="2"
+            android:text="@string/authentication"
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:paddingLeft="10dp"
             />
         <TextView
-            android:layout_marginTop="27dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Verify Smartdomes"
-            android:layout_marginLeft="-130dp"
+            android:text="@string/authentication_settings_detail"
             android:textColor="#BDBAC1"
+            android:paddingLeft="10dp"
             />
+    </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -111,23 +118,26 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_card_membership_24dp"
             />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Subscription Plans\n"
-            android:lines="2"
+            android:text="@string/sub_plan"
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:paddingLeft="10dp"
             />
         <TextView
-            android:layout_marginTop="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Check Or Upgrade Plans"
-            android:layout_marginLeft="-200dp"
+            android:text="@string/sub_plan_details"
             android:textColor="#BDBAC1"
+            android:paddingLeft="10dp"
             />
+    </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -144,23 +154,26 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_work_black_24dp"
             />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Manage Smartdomes\n"
-            android:lines="2"
+            android:text="@string/manage_smatrtdom_settings"
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:paddingLeft="10dp"
             />
         <TextView
-            android:layout_marginTop="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Configure Smartdomes"
-            android:layout_marginLeft="-195dp"
+            android:text="@string/manageSmartdomDetail"
             android:textColor="#BDBAC1"
+            android:paddingLeft="10dp"
             />
+    </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

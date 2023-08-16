@@ -30,7 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main2Activity" />
+        <activity android:name=".Main2Activity"
+            android:label=""/>
         <activity android:name=".QrScannerActivity" />
         <activity android:name=".SigninActivity" />
         <activity android:name=".SignupActivity" />

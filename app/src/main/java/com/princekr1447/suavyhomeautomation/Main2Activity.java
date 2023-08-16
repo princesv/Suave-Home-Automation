@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
@@ -37,6 +38,7 @@ import com.princekr1447.suavyhomeautomation.SettingsModule.SettingsActivity;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,8 @@ import java.util.List;
 public class Main2Activity extends AppCompatActivity {
     FirebaseAuth mAuth;
     public static final int LAUNCH_QR_ACTIVITY_FOR_RESULT=11111;
+
+    private static final int REQUEST_CAMERA_PERMISSION = 201;
     DatabaseReference refUserId;
     DatabaseReference refProductKey;
     String pk;
@@ -77,7 +81,6 @@ public class Main2Activity extends AppCompatActivity {
         imageHome=findViewById(R.id.image_home);
         //toolbar.inflateMenu(R.menu.main_menu);
         setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(ContextCompat.getColor(this,R.color.colorWhite));
         mAuth=FirebaseAuth.getInstance();
         FirebaseUser user=mAuth.getCurrentUser();
         sharedPreferences=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
@@ -173,9 +176,15 @@ public class Main2Activity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==LAUNCH_QR_ACTIVITY_FOR_RESULT){
             if(resultCode== Activity.RESULT_OK){
-                pk=data.getStringExtra("result");
-                Main2Activity.AsyncTaskAddNewCentralModule asyncTaskAddNewCentralModule=new Main2Activity.AsyncTaskAddNewCentralModule();
-                asyncTaskAddNewCentralModule.execute();
+                String res=data.getStringExtra("result");
+                if(res==CommonUtil.CAMERA_PERMISSION){
+                    Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
+                    startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+                }else {
+                    pk=res;
+                    Main2Activity.AsyncTaskAddNewCentralModule asyncTaskAddNewCentralModule = new Main2Activity.AsyncTaskAddNewCentralModule();
+                    asyncTaskAddNewCentralModule.execute();
+                }
             }else if(resultCode== Activity.RESULT_CANCELED){
                 Toast.makeText(this, "Failed to scan product key. Try again.", Toast.LENGTH_SHORT).show();
             }
@@ -264,8 +273,7 @@ public class Main2Activity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addCentralModule:
-                 Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
-                 startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+                 openCamera();
                  return (true);
             case R.id.settings:
                 Intent i2 = new Intent(Main2Activity.this, SettingsActivity.class);
@@ -273,5 +281,21 @@ public class Main2Activity extends AppCompatActivity {
                 return (true);
         }
         return true;
+    }
+    public void openCamera() {
+        if (ActivityCompat.checkSelfPermission(this, "android.permission.CAMERA") == 0) {
+            Intent i = new Intent(Main2Activity.this, QrScannerActivity.class);
+            startActivityForResult(i, LAUNCH_QR_ACTIVITY_FOR_RESULT);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.CAMERA"}, REQUEST_CAMERA_PERMISSION);
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQUEST_CAMERA_PERMISSION || grantResults.length <= 0) {
+        } else if (grantResults[0] == -1) {
+        } else {
+            openCamera();
+        }
     }
 }

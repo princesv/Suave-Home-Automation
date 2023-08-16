@@ -148,15 +148,13 @@ public class QrScannerActivity extends AppCompatActivity {
     /* access modifiers changed from: private */
     public void openCamera() {
         try {
-            if (ActivityCompat.checkSelfPermission(this, "android.permission.CAMERA") == 0) {
-                this.cameraSource.start(this.surfaceView.getHolder());
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{"android.permission.CAMERA"}, REQUEST_CAMERA_PERMISSION);
-            }
+            this.cameraSource.start(this.surfaceView.getHolder());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
 
     /* access modifiers changed from: private */
     public void setBarCodeCamera(SparseArray<Barcode> barCode) {
@@ -180,17 +178,6 @@ public class QrScannerActivity extends AppCompatActivity {
 
     private void copyToClipBoard(String text) {
         ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("QR code Scanner", text));
-    }
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode != REQUEST_CAMERA_PERMISSION || grantResults.length <= 0) {
-            finish();
-        } else if (grantResults[0] == -1) {
-            finish();
-        } else {
-            openCamera();
-        }
     }
     private void takeBarcodePicture() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");

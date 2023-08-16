@@ -69,4 +69,11 @@
     <string name="enter_manually">Enter key manually instead</string>
     <string name="connect_manually">Connect manually</string>
     <string name="switchboards">Switchboards: </string>
+    <string name="profile">Profile</string>
+    <string name="profile_setting_details">View or edit personal data and home photo</string>
+    <string name="authentication">Authentication</string>
+    <string name="authentication_settings_detail">Change phone number/password</string>
+    <string name="sub_plan">My Subscription Plans</string>
+    <string name="sub_plan_details">Check Or Upgrade Plans</string>
+    <string name="manage_smatrtdom_settings">Manage Smartdom</string>
 </resources>

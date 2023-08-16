@@ -41,7 +41,7 @@
                 android:layout_height="64dp"
                 android:layout_width="match_parent"
                 android:background="@drawable/flag_transparent"
-                app:title="@string/app_name"
+                app:title=""
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways"
@@ -74,7 +74,7 @@
         android:orientation="vertical"
         android:background="@color/colorPrimaryDark"
         android:id="@+id/idShimmerLayoutView"
-        android:layout_marginTop="64dp">
+        android:layout_marginTop="384dp">
         <com.facebook.shimmer.ShimmerFrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
